@@ -1,0 +1,13 @@
+<p>Hi {{ user.username }}!</p>
+
+<p>Please <a href="{{ url_for('auth.confirm_registration', token=token, _external=True) }}">click here</a> to confirm registration. </p>
+
+<p>Alternatively, you can paste the below link into the browser address bar</p>
+
+<p>{{ url_for('auth.confirm_registration', token=token, _external=True) }}/p>
+
+<p>Please ignore this email if you did not register. </p>
+
+<p>Thanks,</p>
+
+<p>Microblog Team</p>

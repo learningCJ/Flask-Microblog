@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+    <tr valign="top">
+        <td>
+            <img src="{{ user.avatar(128) }}">
+        </td>
+        <td>
+            <h1>{{ _('User: %(username)s', username= user.username) }}</h1>
+            {% if user.about_me %}
+            <p>{{ _('About Me: %(about_me)s', about_me = user.about_me) }}</p>
+            {% endif %}
+            <p>{{ _('%(follower_count)d followers', follower_count=user.count_followers()) }},  {{ _('%(following_count)d following', following_count= user.count_following()) }}</p>
+            <p>{{ _('Last Seen') }}: {{ moment(user.last_seen).calendar() }}</p>
+            {% if user == current_user %}
+            <p><a href="{{ url_for('main.edit_profile') }}">{{ _('Edit your profile') }}</a></p>
+            {% elif not current_user.is_following(user) %}
+            <p>
+                <form action="{{ url_for('main.follow', username=user.username) }}" method="post">
+                    {{ form.hidden_tag() }}
+                    {{ form.submit(value=_("Follow"), class="btn btn-outline-primary") }}
+                </form>
+            </p>
+            {% elif current_user.is_following(user) %}
+            <p>
+                <form action="{{ url_for('main.unfollow', username=user.username) }}" method="post">
+                    {{ form.hidden_tag() }}
+                    {{ form.submit(class="btn btn-outline-primary", value=_("Unfollow")) }}
+                </form>
+            </p>
+            {% endif %}
+            {% if not user.isVerified and user == current_user %}
+            <p>
+                <a href="{{ url_for('auth.confirm_registration_request') }}">Re-send Registration Confirmation</a>
+            </p>
+            {% endif %}
+        </td>
+    </tr>
+</table>
+<hr>
+{% for post in posts %}
+    {% include "_post.html" %}
+{% endfor %}
+
+<nav aria-label="home-pagination">
+    <ul class="pagination justify-content-center">
+        {% if prev_url %}
+        <li class="page-item">
+            <a class="page-link" href="{{ prev_url }}">{{ _('Prev') }}
+            </a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">{{ _('Prev') }}</span>
+        </li>
+        {% endif %}
+
+        {% if next_url %}
+        <li class="page-item">
+            <a class="page-link" href="{{ next_url }}">{{ _('Next') }}</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">{{ _('Next') }}</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% endblock %}

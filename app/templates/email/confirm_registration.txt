@@ -1,0 +1,11 @@
+Hi {{ user.username }}!
+
+Please paste this link into the URL to confirm registration:
+
+{{ url_for('auth.confirm_registration', token=token, _external=True) }}
+
+Please ignore this email if you did not register.
+
+Thanks,
+
+Microblog Team

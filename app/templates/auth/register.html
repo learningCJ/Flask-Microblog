@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <div class="form-floating mb-3">
+        {{ form.username(class="form-control", id="floatingInput", placeholder="Username") }}
+        {{ form.username.label(for="floatingInput") }}
+        {% for error in form.username.errors %}
+        <span style="color:red">{{ error }}</span>
+        {% endfor %}
+    </div>
+    <div class="form-floating mb-3">
+        {{ form.email(class="form-control", id="floatingEmail", placeholder="Email") }}
+        {{ form.email.label(for="floatingEmail") }}
+        {% for error in form.email.errors %}
+        <span style="color:red">{{ error }}</span>
+        {% endfor %}
+    </div>
+    <div class="row g-2">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                {{ form.password(class="form-control", id="floatingPW", placeholder="Password") }}
+                {{ form.password.label(for="floatingPW") }}
+                {% for error in form.password.errors %}
+                <span style="color:red">{{ error }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="col-6 w-auto h-auto">
+                <div
+                class="alert px-4 py-2 mb-0 is-valid"
+                role="alert"
+                data-mdb-color="warning"
+                id="password-alert"
+                >
+                    <ul class="list-unstyled mb-0">
+                        <li class="requirements leng">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <i class="fas fa-times text-danger me-3"></i>
+                            Your password must have at least 8 chars</li>
+                        <li class="requirements lowercase-letter">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <i class="fas fa-times text-danger me-3"></i>
+                            Your password must have at least 1 lower case letter.</li>
+                        <li class="requirements big-letter">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <i class="fas fa-times text-danger me-3"></i>
+                            Your password must have at least 1 capital letter.</li>
+                        <li class="requirements num">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <i class="fas fa-times text-danger me-3"></i>
+                            Your password must have at least 1 number.</li>
+                        <li class="requirements special-char">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <i class="fas fa-times text-danger me-3"></i>
+                            Your password must have at least 1 special char from [!@#$%^&-_].</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row g-2">
+        <div class="col-md">
+            <div class="form-floating mb-3">
+                {{ form.password_confirm(class="form-control", id="floatingPWConf", placeholder="Confirm Password") }}
+                {{ form.password_confirm.label(for="floatingPWConf") }}
+                {% for error in form.password_confirm.errors %}
+                <span style="color:red">{{ error }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md">
+            <div class="col-6 w-auto h-auto">
+                <div
+                class="alert px-4 py-2 mb-0 is-valid"
+                role="alert"
+                data-mdb-color="warning"
+                id="passwordConfirm-alert"
+                >
+                    <ul class="list-unstyled mb-0">
+                        <li class="confirmReq">
+                            <i class="fas fa-check text-success me-2"></i>
+                            <i class="fas fa-times text-danger me-3"></i>
+                            Your password must match</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p>
+        {{ form.submit(class="btn btn-outline-primary") }}
+    </p>
+</form>
+
+{% endblock %}
+
