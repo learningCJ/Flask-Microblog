@@ -3,7 +3,5 @@
 /venv
 .env
 app.db
-babel.cfg
-config.py
 microblog.log
 .gitignore
