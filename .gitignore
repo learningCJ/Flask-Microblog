@@ -6,4 +6,3 @@ app.db
 babel.cfg
 config.py
 microblog.log
-requirements.txt
