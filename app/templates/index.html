@@ -12,9 +12,6 @@
             <div class="form-floating mb-3">
             {{ form.post(class="form-control", id="floatingPost", placeholder="Say Something!") }}
             {{ form.post.label(for="floatingPost") }}
-            {% if persistentMsg %}
-            <textarea id="floatingPost" name="post">{{ persistentMsg }}</textarea>
-            {% endif %}
             </div>
             {% for error in form.post.errors %}
             <span style="color:red;">{{ error }}</span><br>

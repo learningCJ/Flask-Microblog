@@ -28,7 +28,6 @@ def index():
     if form.validate_on_submit():
         if not current_user.isVerified:
             flash(_('You can only post when you confirm your account. Please check your email or resend confirmation email from your profile page'))
-            persistentMsg = form.post.data
             return redirect(url_for('main.index'))
         try:
             language = detect(form.post.data)
