@@ -5,3 +5,4 @@
 app.db
 microblog.log
 .gitignore
+/app/__pycache__
