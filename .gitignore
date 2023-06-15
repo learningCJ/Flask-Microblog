@@ -1,8 +1,10 @@
-/logs
-/__pycache__
+/logs/
+/__pycache__/
 /venv
 .env
 app.db
 microblog.log
 .gitignore
-/app/__pycache__
+/app/__pycache__/
+/app/main/__pycache__/*.pyc
+*.pyc
