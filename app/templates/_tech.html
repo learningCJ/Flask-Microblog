@@ -1,0 +1,44 @@
+<div class="postTable">
+    <table>
+        <tr valign="top" >
+            <td valign="top">
+               <b>{{ tech.techType }}:</b>
+            </td>
+            <td valign="top">
+                {{ tech.techName }}
+             </td>
+        </tr> 
+         
+        
+        {% if admin %}
+        <div class="deleteFollowUnfollow"> 
+            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ tech.id }}">
+                {{ _('Delete') }}
+                </button>
+        </div>
+        <div class="modal fade" id="deleteModal{{ tech.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="deleteModalLabel">{{ _('Confirm Delete') }}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ _('Are you sure you want to delete?') }} <br><br>
+                        <div class="vr"></div>
+                        {{ tech.techName }} 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Close') }}</button>
+                        <form action="{{ url_for('main.deleteTech', techID =tech.id) }}" method="post">
+                            {{ form.hidden_tag() }}
+                            {{ form.submit(value=_('Delete'), class="delete btn btn-outline-danger") }}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %} 
+        </div>            
+    </table>
+</div>
