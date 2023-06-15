@@ -41,7 +41,6 @@ def index():
     page = request.args.get('page', default=1, type=int)
     posts = db.paginate(current_user.followed_posts_select().order_by(Post.timestamp.desc()), 
                         page=page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
-    print(posts)
     next_url=url_for('main.index', page=posts.next_num) \
         if posts.has_next else None
     prev_url=url_for('main.index', page=posts.prev_num) \
@@ -186,7 +185,6 @@ def about():
     form = AboutSiteForm()
     if form.validate_on_submit():
         techStack = TechStack(techType=form.techType.data, techName=form.techName.data, category = form.category.data)
-        print(form.category.data)
         db.session.add(techStack)
         db.session.commit()
         flash(_('Changes made successfully!'))
