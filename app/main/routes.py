@@ -3,13 +3,13 @@ from flask import render_template, flash,redirect, url_for, request, g, jsonify,
 from flask_login import login_required, current_user
 from app.auth.forms import EditProfileForm, EmptyForm, PostForm
 import sqlalchemy as sa
-from app.models import User, Post
+from app.models import User, Post, TechStack
 from datetime import datetime
 from flask_babel import _, get_locale
 from langdetect import detect, LangDetectException
 from app.translate import translate
 from app.main import bp
-from app.main.forms import SearchForm
+from app.main.forms import SearchForm, AboutSiteForm
 
 @bp.before_request
 def before_request():
@@ -41,6 +41,7 @@ def index():
     page = request.args.get('page', default=1, type=int)
     posts = db.paginate(current_user.followed_posts_select().order_by(Post.timestamp.desc()), 
                         page=page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
+    print(posts)
     next_url=url_for('main.index', page=posts.next_num) \
         if posts.has_next else None
     prev_url=url_for('main.index', page=posts.prev_num) \
@@ -145,6 +146,22 @@ def delete(postID):
     else:
         return redirect(url_for('main.index'))
     
+@bp.route('/deleteTech/<techID>', methods=["POST"])
+@login_required
+def deleteTech(techID):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        tech = db.session.get(TechStack, techID)
+        if tech is None:
+            flash(_('The tech you deleted could not be found'))
+            return redirect(request.referrer)
+        tech.delete()
+        db.session.commit()
+        flash(_('You have successfully deleted the tech!'))
+        return redirect(request.referrer)
+    else:
+        return redirect(url_for('main.about'))
+    
 @bp.route('/translate', methods=['POST'])
 @login_required
 def translate_text():
@@ -163,3 +180,17 @@ def search():
     prev_url = url_for('main.search', q=g.search_form.q.data, page=page-1) if page > 1 else None
     form = EmptyForm()
     return render_template('search.html', title=_('Search'), posts=posts, next_url=next_url, prev_url=prev_url, form=form)
+
+@bp.route('/about', methods=['GET','POST'])
+def about():
+    form = AboutSiteForm()
+    if form.validate_on_submit():
+        techStack = TechStack(techType=form.techType.data, techName=form.techName.data, category = form.category.data)
+        print(form.category.data)
+        db.session.add(techStack)
+        db.session.commit()
+        flash(_('Changes made successfully!'))
+        return redirect(url_for('main.about'))
+    techs = db.session.scalars(sa.select(TechStack))
+    admin = current_user.is_authenticated and current_user.email == current_app.config['ADMIN']
+    return render_template('about.html', title=_('About'), form=form, techs=list(techs), admin=admin)

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% if admin %}
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <div class="form-floating mb-3">
+            {{ form.techType(class="form-control", id="floatingTechType", placeholder="Technology Type") }}
+            {{ form.techType.label(for="floatingTechType") }}
+            {% for error in form.techType.errors %}
+            <span style="color:red">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="form-floating mb-3">
+            {{ form.techName(class="form-control", id="floatingTechName", placeholder="Technology Name") }}
+            {{ form.techName.label(for="floatingTechName") }}
+            {% for error in form.techName.errors %}
+            <span style="color:red">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ form.category(class="form-select", **{'aria-label': 'Category'}) }}
+            {% for error in form.category.errors %}
+            <span style="color:red">{{ error }}</span>
+            {% endfor %}
+        </div>
+        </br>
+        {{ form.submit(class="btn btn-outline-primary", value ="Add") }}
+    </form>
+    {% endif %}
+    <br>
+    <h2>{{_('About Chris')}}</h2>
+    {% include "aboutChris.html" %}
+    <br>
+    <h2>{{_('Under the Hood')}}</h2>
+    {% if techs %}
+        {% for tech in techs %}
+            {% if tech.category =="sw" %}
+            {% include "_tech.html" %}
+            {% endif %}
+        {% endfor %}
+        <br>
+        <h2>{{_('Infrastructure')}}</h2>
+        {% for tech in techs%}
+            {% if tech.category =="infr" %}
+            {% include "_tech.html" %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</br>
+{% endblock %}
+
+
+
+techType
+techName
+category

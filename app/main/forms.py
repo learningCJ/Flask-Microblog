@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, EqualTo, Email, ValidationError, Length
 from app import db
 import sqlalchemy as sa
@@ -59,3 +59,9 @@ class SearchForm(FlaskForm):
         if 'meta' not in kwargs:
             kwargs['meta'] = {'csrf':False}
         super(SearchForm, self).__init__(*args, **kwargs)
+
+class AboutSiteForm(FlaskForm):
+    techType = StringField(_('Tech Type'), validators=[DataRequired(), Length(min=1, max=50)])
+    techName = StringField(_('Tech Name'), validators=[DataRequired(), Length(min=1, max=100)])
+    category = SelectField(_('Category'), choices=[('Software'), ('Infrastructure')])
+    submit = SubmitField(_l('Submit'))

@@ -7,4 +7,8 @@ microblog.log
 .gitignore
 /app/__pycache__/
 /app/main/__pycache__/*.pyc
+<<<<<<< HEAD
 *.pyc
+=======
+*.pyc
+>>>>>>> navbar-update

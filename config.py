@@ -27,3 +27,4 @@ class Config(object):
     ELASTICSEARCH_USERNAME = os.environ.get('ELASTICSEARCH_USERNAME')
     ELASTICSEARCH_PW = os.environ.get('ELASTICSEARCH_PW')
     ELASTICSEARCH_CERT_DIR = os.environ.get('ELASTICSEARCH_CERT_DIR')
+    ADMIN = os.environ.get('ADMIN')

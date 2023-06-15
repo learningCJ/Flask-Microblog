@@ -35,20 +35,27 @@
     <body>
         <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ url_for('main.index') }}">{{ _('Microblog') }}</a>
+                <a class="navbar-brand abs" href="{{ url_for('main.index') }}">{{ _('ChrisJeong.one') }}</a>
                 <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
             
-                <div class="navbar-collapse collapse" id="navbarCollapse" style>
+                <div class="navbar-collapse collapse" id="navbarCollapse">
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                        <li class="nav-item">
+                        <li class="nav-item active">
                             <a class="nav-link" href="{{ url_for('main.index') }}">{{ _('Home') }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('main.explore') }}">{{ _('Explore') }}</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('main.about') }}">{{ _('About') }}</a>
+                        </li>
                         
+                        
+                    </ul>
+                    <ul class="navbar-nav ms-auto">
+                       
                         {% if current_user.is_anonymous %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
@@ -63,11 +70,12 @@
                         {% endif %}
                     </ul>
                         {% if g.search_form %}
-                        <form class="d-flex" role ="search" method="get" action="{{ url_for('main.search') }}">
+                        <form class="d-flex" role ="search" method="get" action="{{ url_for('main.search') }}" id="searchBox">
                             {{ g.search_form.q(type='search', size=20, class='form-control me-2', placeholder=g.search_form.q.label.text) }}
                         </form>
                         {% endif %}
-                    
+                        <a href="https://github.com/learningCJ" target="_blank"><img src ="{{ url_for('static', filename='github-mark.png') }}" width="35px" height="35px"></a>
+                        <a href="https://www.linkedin.com/in/chrisheechuljeong/" target="_blank"><img src ="{{ url_for('static', filename='LinkedInLogo.png') }}" width="35px" height="35px"></a>
                 </div>
             </div>
         </nav>

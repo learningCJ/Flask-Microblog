@@ -23,3 +23,18 @@ body {
 .invalid-feedback {
   margin-left: calc(2em + 0.25rem + 1.5rem);
 }
+
+@media (min-width: 1100px) {
+    .navbar-brand.abs
+        {
+            position: absolute;
+            width: auto;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+}
+
+#searchBox{
+    padding-right: 1rem;
+}

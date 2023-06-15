@@ -165,4 +165,15 @@ class Post(SearchableMixin,db.Model):
 
     def __repr__(self):
         return '<Post: {}>'.format(self.body)
+
+class TechStack(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    techType: so.Mapped[str] = so.mapped_column(sa.String(50))
+    techName: so.Mapped[str] = so.mapped_column(sa.String(100))
+    category: so.Mapped[str] = so.mapped_column(sa.String(20))
+
+    def __repr__(self):
+        return '<{type}: {name}>'.format(type=self.techType, name=self.techName)
     
+    def delete(self):
+        db.session.execute(sa.delete(TechStack).where(TechStack.id == self.id))
