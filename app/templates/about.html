@@ -34,14 +34,14 @@
     <h2>{{_('Under the Hood')}}</h2>
     {% if techs %}
         {% for tech in techs %}
-            {% if tech.category =="sw" %}
+            {% if tech.category =="Software" %}
             {% include "_tech.html" %}
             {% endif %}
         {% endfor %}
         <br>
         <h2>{{_('Infrastructure')}}</h2>
         {% for tech in techs%}
-            {% if tech.category =="infr" %}
+            {% if tech.category =="Infrastructure" %}
             {% include "_tech.html" %}
             {% endif %}
         {% endfor %}
