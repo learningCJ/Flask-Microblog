@@ -38,3 +38,11 @@ body {
 #searchBox{
     padding-right: 1rem;
 }
+
+#techTypeCol{
+    width: 30%;
+}
+
+#techTable{
+    width: 90%;
+}
