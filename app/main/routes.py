@@ -35,7 +35,7 @@ def index():
         except LangDetectException:
             language =''
         URLRegex="http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+#!%]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
-        URLsinBody = re.findall(URLRegex, form.post.data)
+        URLsinBody = set(re.findall(URLRegex, form.post.data))
         for URLinBody in URLsinBody:
             form.post.data = form.post.data.replace(URLinBody, f'<a href="{URLinBody}" target="_blank">{URLinBody}</a>')
         post = Post(body=form.post.data, author=current_user, language=language)
