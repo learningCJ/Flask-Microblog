@@ -152,7 +152,7 @@ class User(UserMixin,db.Model):
 
 class Post(SearchableMixin,db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    body: so.Mapped[str] = so.mapped_column(sa.String(140))
+    body: so.Mapped[str] = so.mapped_column(sa.String(1500))
     timestamp: so.Mapped[datetime] = so.mapped_column(index = True, default=datetime.utcnow)
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index = True)
     author: so.Mapped['User'] = so.relationship(back_populates='posts')

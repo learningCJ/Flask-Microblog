@@ -30,7 +30,7 @@ class RegistrationForm(FlaskForm):
             raise ValidationError(_('The Username %(username)s is already taken. Please try again', username=username.data))
         
     def validate_email(self, email):
-        user = db.session.scalar(sa.select(User).filter_by(email = email.data))
+        user = db.session.scalar(sa.select(User).filter_by(email = email.data.lower()))
 
         if user is not None:
             raise ValidationError(_('%(email)s is already taken. Please use another email or reset password', email=email.data))
@@ -67,10 +67,6 @@ class EditProfileForm(FlaskForm):
             
 class EmptyForm(FlaskForm):
     submit = SubmitField(_l("Submit"))
-
-class PostForm(FlaskForm):
-    post = TextAreaField(_l('Say Something!'), validators=[Length(min=1, max=140)])
-    submit = SubmitField(_l('Submit'))
 
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])

@@ -1,7 +1,7 @@
 from app import db
 from flask import render_template, flash,redirect, url_for, request, g, jsonify, current_app
 from flask_login import login_required, current_user
-from app.auth.forms import EditProfileForm, EmptyForm, PostForm
+from app.auth.forms import EditProfileForm, EmptyForm
 import sqlalchemy as sa
 from app.models import User, Post, TechStack
 from datetime import datetime
@@ -9,7 +9,8 @@ from flask_babel import _, get_locale
 from langdetect import detect, LangDetectException
 from app.translate import translate
 from app.main import bp
-from app.main.forms import SearchForm, AboutSiteForm
+from app.main.forms import SearchForm, AboutSiteForm,PostForm
+import re
 
 @bp.before_request
 def before_request():
@@ -33,6 +34,10 @@ def index():
             language = detect(form.post.data)
         except LangDetectException:
             language =''
+        URLRegex="http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+#!%]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
+        URLsinBody = re.findall(URLRegex, form.post.data)
+        for URLinBody in URLsinBody:
+            form.post.data = form.post.data.replace(URLinBody, f'<a href="{URLinBody}" target="_blank">{URLinBody}</a>')
         post = Post(body=form.post.data, author=current_user, language=language)
         db.session.add(post)
         db.session.commit()
@@ -45,7 +50,7 @@ def index():
         if posts.has_next else None
     prev_url=url_for('main.index', page=posts.prev_num) \
         if posts.has_prev else None
-    return render_template('index.html', title=_('Home'),  posts = posts, form = form, next_url=next_url, prev_url=prev_url, persistentMsg=persistentMsg)
+    return render_template('index.html', title=_('Home'),  posts = posts, form = form, next_url=next_url, prev_url=prev_url)
 
 @bp.route('/user/<username>')
 @login_required
@@ -53,7 +58,6 @@ def user(username):
     user = db.session.scalar(sa.select(User).filter_by(username=username))
     if user is None:
         flash(_('User %(username)s not found', username=username))
-        #flash('User {} not found'.format(username))
         return redirect(url_for('main.index'))
     page = request.args.get('page', default=1, type=int)
     posts = db.paginate(sa.select(Post).where(Post.author==user).order_by(Post.timestamp.desc()), 

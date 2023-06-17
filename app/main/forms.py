@@ -6,6 +6,8 @@ import sqlalchemy as sa
 from app.models import User
 from flask_babel import lazy_gettext as _l, _
 from flask import request
+import emoji
+import re
 
 class EditProfileForm(FlaskForm):
 
@@ -29,6 +31,12 @@ class EmptyForm(FlaskForm):
 class PostForm(FlaskForm):
     post = TextAreaField(_l('Say Something!'), validators=[Length(min=1, max=140)])
     submit = SubmitField(_l('Submit'))
+
+    def validate_post(self, post):
+        self.post.data = emoji.emojize(self.post.data)
+        #self.post.data = re.sub(r'(https?://\S+)', r'<a href="\1">\1</a>', self.post.data)
+        if not post.data.strip():
+            raise ValidationError(_('Post cannot be blank!'))
 
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])

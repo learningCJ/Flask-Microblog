@@ -12,18 +12,19 @@
                 {% endset %}
                     {{ _('%(username)s said %(when)s:', 
                         username=user_link, when = moment(post.timestamp).fromNow()) }}  <br>  
-                <span id="post{{ post.id }}">{{ post.body }}</span>
+                <span id="post{{ post.id }}">{{ post.body|textile|safe }}</span>
                 {% if post.language and post.language != g.locale %}
                 <br>
-                <span id="translation{{ post.id }}">
-                    <a href="javascript:translate(
-                        '#post{{ post.id }}',
-                        '#translation{{ post.id }}',
-                        '{{ post.language }}',
-                        '{{ g.locale }}');">{{ _('Translate') }}
-                    </a>
-                </span>
-
+                    {% if current_user.is_authenticated %}
+                    <span id="translation{{ post.id }}">
+                        <a href="javascript:translate(
+                            '#post{{ post.id }}',
+                            '#translation{{ post.id }}',
+                            '{{ post.language }}',
+                            '{{ g.locale }}');">{{ _('Translate') }}
+                        </a>
+                    </span>
+                    {% endif %}
                 {% endif %}
             </td>
         </tr> 

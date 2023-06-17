@@ -10,6 +10,7 @@ from flask_moment import Moment
 from flask_babel import Babel,lazy_gettext as _l
 from config import Config 
 from elasticsearch import Elasticsearch
+import textile
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -20,9 +21,13 @@ mail = Mail()
 moment = Moment()
 babel = Babel()
 
+def textile_filter(text):
+     return textile.textile(text)
+
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    app.jinja_env.filters['textile'] = textile_filter
 
     app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']], ca_certs=app.config['ELASTICSEARCH_CERT_DIR'], \
                                       basic_auth=(app.config['ELASTICSEARCH_USERNAME'], app.config['ELASTICSEARCH_PW']))\
@@ -73,6 +78,7 @@ def create_app(config_class=Config):
         
         app.logger.setLevel(logging.INFO)
         app.logger.info('Microblog startup')
+        
     return app
 
 
@@ -82,6 +88,7 @@ def get_locale():
     #return 'ko'
 
 from app import models
+
 
 
 
