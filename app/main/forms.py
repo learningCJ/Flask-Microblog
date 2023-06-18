@@ -34,7 +34,6 @@ class PostForm(FlaskForm):
 
     def validate_post(self, post):
         self.post.data = emoji.emojize(self.post.data)
-        #self.post.data = re.sub(r'(https?://\S+)', r'<a href="\1">\1</a>', self.post.data)
         if not post.data.strip():
             raise ValidationError(_('Post cannot be blank!'))
 
