@@ -12,6 +12,7 @@ import re
 class LoginForm(FlaskForm):
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])
     password = PasswordField(_l('Password'), validators=[DataRequired()])
+    show_pw = BooleanField(_l('Show Password'))
     remember_me = BooleanField(_l('Remember Me'))
     submit = SubmitField(_l('Sign In'))
 
@@ -20,6 +21,7 @@ class RegistrationForm(FlaskForm):
     email = StringField(_l('Email'), validators=[DataRequired(),Email()])
     password = PasswordField(_l('Password'), validators=[DataRequired(), Length(min=8)])
     password_confirm = PasswordField(_l('Please Confirm Password'), validators=[DataRequired(), EqualTo('password')])
+    show_pw = BooleanField(_l('Show Password'))
     submit = SubmitField(_l('Register'))
 
     def validate_username(self, username):

@@ -27,6 +27,7 @@
                 {% endfor %}
             </div>
         </div>
+        <p>{{ form.show_pw(class="form-check-input", id="showPW", onclick="toggle('floatingPW')") }} {{ form.show_pw.label(for="showPW") }}</p>
         <div class="col-md">
             <div class="col-6 w-auto h-auto">
                 <div
@@ -72,6 +73,7 @@
                 {% endfor %}
             </div>
         </div>
+        <div>{{ form.show_pw(class="form-check-input", id="showPWConf", onclick="toggle('floatingPWConf')") }} {{ form.show_pw.label(for="showPWConf") }}</div>
         <div class="col-md">
             <div class="col-6 w-auto h-auto">
                 <div

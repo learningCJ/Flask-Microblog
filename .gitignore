@@ -8,3 +8,5 @@ microblog.log
 /app/__pycache__/
 /app/main/__pycache__/*.pyc
 *.pyc
+script.js
+ app/auth/__pycache__/

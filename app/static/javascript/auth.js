@@ -164,3 +164,15 @@ addEventListener("DOMContentLoaded", (event) => {
         }
     });
 });
+
+function toggle(id) {
+    let pwField = document.getElementById(id);
+     
+    if (pwField.type === "password") {
+        pwField.type = "text";
+    }
+    else {
+        pwField.type = "password";
+    }
+}
+
