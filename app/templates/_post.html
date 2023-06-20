@@ -18,7 +18,7 @@
                 {% if post.language and post.language != g.locale %}
                 <br>
                     {% if current_user.is_authenticated %}
-                    <span id="translation{{ post.id }}">
+                    <span id="translation{{ post.id }}" class="text-break">
                         <a href="javascript:translate(
                             '#post{{ post.id }}',
                             '#translation{{ post.id }}',
