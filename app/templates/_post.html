@@ -12,7 +12,7 @@
                 {% endset %}
                     {{ _('%(username)s said %(when)s:', 
                         username=user_link, when = moment(post.timestamp).fromNow()) }}  <br>  
-                <span id="post{{ post.id }}">
+                <span id="post{{ post.id }}" class="text-break">
                     {{ post.body|textile|safe }}
                 </span>
                 {% if post.language and post.language != g.locale %}
