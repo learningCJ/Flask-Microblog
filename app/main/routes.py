@@ -196,3 +196,7 @@ def about():
     techs = db.session.scalars(sa.select(TechStack))
     admin = current_user.is_authenticated and current_user.email == current_app.config['ADMIN']
     return render_template('about.html', title=_('About'), form=form, techs=list(techs), admin=admin)
+
+@bp.route('/resume', methods=['GET'])
+def resume():
+    return render_template('ChrisJeong.html', title=_('Resume'))

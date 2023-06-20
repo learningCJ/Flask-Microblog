@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+    <section id="about" class="container">
+        <h1 class="display-4">Chris Jeong</h1>
+        <p></p>
+        <p>
+            <strong>Skills:</strong>
+            <span class="badge text-bg-primary">Flask</span>
+            <span class="badge text-bg-primary">HTML</span>
+            <span class="badge text-bg-primary">Python</span>
+            <span class="badge text-bg-primary">SQL</span>
+            <span class="badge text-bg-primary">SQLAlchemy</span>
+            <span class="badge text-bg-primary">CSS</span>
+            <span class="badge text-bg-primary">JavaScript</span>
+        </p>
+    </section>
+    <section id="project" class="container">
+        <div class="card">
+            <div class="card-header collapse show", data-bs-toggle="collapse", >
+                <div class="row">
+                    <h5 class="col-md-8 mb-0"><a data-bs-toggle="collapse" href="#proj1" data-target="#proj1" aria-expanded="false" aria-controls="proj1">ChrisJeong.one</a></h5>
+                    <em class="col-md-4 text-md-right">January 2023 - Current</em>
+                </div>
+            </div>
+            <div class="collapse" id="proj1">
+                <ul>
+                    <li>Developed and deployed a microblog web app from end to end using Flask, HTML, CSS, Bootstrap5, and JavaScript. The app was deployed on an ARM based Virtual Machine (Oracle Cloud)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+{% endblock %}
