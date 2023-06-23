@@ -27,6 +27,7 @@
                 {% endfor %}
             </div>
         </div>
+        <!--Password Policy Checker-->
         <p>{{ form.show_pw(class="form-check-input", id="showPW", onclick="toggle('floatingPW')") }} {{ form.show_pw.label(for="showPW") }}</p>
         <div class="col-md">
             <div class="col-6 w-auto h-auto">
@@ -73,6 +74,7 @@
                 {% endfor %}
             </div>
         </div>
+        <!--Password confirm policy checker-->
         <div>{{ form.show_pw(class="form-check-input", id="showPWConf", onclick="toggle('floatingPWConf')") }} {{ form.show_pw.label(for="showPWConf") }}</div>
         <div class="col-md">
             <div class="col-6 w-auto h-auto">
@@ -92,6 +94,7 @@
             </div>
         </div>
     </div>
+    <br>
     <p>
         {{ form.submit(class="btn btn-outline-primary") }}
     </p>

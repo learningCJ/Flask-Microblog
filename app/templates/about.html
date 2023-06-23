@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+    <!--admin tool to add more tech-->
     {% if admin %}
     <form action="" method="post">
         {{ form.hidden_tag() }}
@@ -27,12 +28,15 @@
         {{ form.submit(class="btn btn-outline-primary", value ="Add") }}
     </form>
     {% endif %}
-    <br>
+    <!--end of admin tool-->
+    <!--about myself-->
     <h2 id="about-Chris">{{_('About Chris')}}</h2>
     {% include "aboutChris.html" %}
     <a href="/resume" class="btn btn-outline-primary">View Resume</a>
     <br>
     <br>
+    <!--end of about myself-->
+    <!--under the hood and infra-->
     <section>
         <h2 id="about-the-site">{{_('Under the Hood')}}</h2>
         {% if techs %}
