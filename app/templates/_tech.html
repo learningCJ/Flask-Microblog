@@ -1,16 +1,12 @@
-<div class="postTable">
-    <table class="table" id="techTable">
-        <tr valign="top" >
-            <td valign="top" id="techTypeCol">
-               <b>{{ tech.techType }}:</b>
-            </td>
-            <td valign="top" id="techNameCol">
-                {{ tech.techName }}
-             </td>
-        </tr> 
-         
-        
-        {% if admin %}
+<tr valign="top" >
+    <td valign="top" id="techTypeCol">
+        <b>{{ tech.techType }}:</b>
+    </td>
+    <td valign="top" id="techNameCol">
+        {{ tech.techName }}
+    </td>
+    {% if admin %}
+    <td>
         <div class="deleteFollowUnfollow"> 
             <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ tech.id }}">
                 {{ _('Delete') }}
@@ -38,7 +34,7 @@
                 </div>
             </div>
         </div>
-        {% endif %} 
-        </div>            
-    </table>
-</div>
+    </td>
+    {% endif %}    
+</tr> 
+ 

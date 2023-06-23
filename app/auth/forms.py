@@ -26,7 +26,7 @@ class RegistrationForm(FlaskForm):
 
     def validate_username(self, username):
         #checks whether the username already exists
-        user = db.session.scalar(sa.select(User).filter_by(username = username.data))
+        user = db.session.scalar(sa.select(User).filter_by(username = username.data.strip()))
 
         if user is not None:
             raise ValidationError(_('The Username %(username)s is already taken. Please try again', username=username.data))

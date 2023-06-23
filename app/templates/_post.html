@@ -1,83 +1,74 @@
 <div class="postTable">
-    <table>
-        <tr valign="top" >
-            <td>
-                <img src = "{{ post.author.avatar(36) }}">
-            </td>
-            <td valign="top">
-                {% set user_link %}
-                <a href = "{{ url_for('main.user', username=post.author.username) }}">
-                    {{ post.author.username }}
-                </a> 
-                {% endset %}
-                    {{ _('%(username)s said %(when)s:', 
-                        username=user_link, when = moment(post.timestamp).fromNow()) }}  <br>  
-                <span id="post{{ post.id }}" class="text-break">
-                    {{ post.body|textile|safe }}
-                </span>
-                {% if post.language and post.language != g.locale %}
-                <br>
-                    {% if current_user.is_authenticated %}
-                    <span id="translation{{ post.id }}" class="text-break">
-                        <a href="javascript:translate(
-                            '#post{{ post.id }}',
-                            '#translation{{ post.id }}',
-                            '{{ post.language }}',
-                            '{{ g.locale }}');">{{ _('Translate') }}
-                        </a>
-                    </span>
-                    {% endif %}
-                {% endif %}
-            </td>
-        </tr> 
-         
-        
-        {% if current_user == post.author %}
-        <div class="deleteFollowUnfollow"> 
-            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ post.id }}">
-                {{ _('Delete') }}
-                </button>
+    <div class="d-flex mb-2">
+        <div class="flex-shrink-1 me-2">
+            <img src = "{{ post.author.avatar(36) }}">
         </div>
-        <div class="modal fade" id="deleteModal{{ post.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="deleteModalLabel">{{ _('Confirm Delete') }}</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
-                    </div>
-                    <div class="modal-body">
-                        {{ _('Are you sure you want to delete this post?') }} <br><br>
-                        <div class="vr"></div>
-                        {{ post.body }} 
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Close') }}</button>
-                        <form action="{{ url_for('main.delete', postID = post.id) }}" method="post">
-                            {{ form.hidden_tag() }}
-                            {{ form.submit(value=_('Delete'), class="delete btn btn-outline-danger") }}
-                        </form>
-                    </div>
-                </div>
+        <div class="flex-grow-1">
+            {% set user_link %}
+            <a href = "{{ url_for('main.user', username=post.author.username) }}">
+                {{ post.author.username }}
+            </a> 
+            {% endset %}
+                {{ _('%(username)s said %(when)s:', 
+                    username=user_link, when = moment(post.timestamp).fromNow()) }}  
+            <span id="post{{ post.id }}" class="text-break post-span">
+                {{ post.body|textile|safe }}
+            </span>
+            {% if post.language and post.language != g.locale %}
+                {% if current_user.is_authenticated %}
+                <span id="translation{{ post.id }}" class="text-break">
+                    <a href="javascript:translate(
+                        '#post{{ post.id }}',
+                        '#translation{{ post.id }}',
+                        '{{ post.language }}',
+                        '{{ g.locale }}');">{{ _('Translate') }}
+                    </a>
+                </span>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="flex-shrink-1">
+            <div class ="dropdown">
+                <a class="dropdown-toggle" href="#" id="postDropDownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></a>
+                <ul class="dropdown-menu" aria-labelledby="postDropDownMenuLink">
+                    {% if current_user == post.author %}
+                    <li><a class="dropdown-item" href="#deleteModal{{ post.id }}" data-bs-toggle="modal">{{ _('Delete') }}</a></li>
+                    {% elif current_user.is_authenticated and current_user.is_following(post.author) %}
+                    <form action="{{ url_for('main.unfollow', username=post.author.username) }}" method="post">
+                        {{ form.hidden_tag() }}
+                        {{ form.submit(value=_("Unfollow"), class="dropdown-item") }}
+                    </form>
+                    {% elif current_user.is_authenticated and not current_user.is_following(post.author) %}
+                    <form action="{{ url_for('main.follow', username=post.author.username) }}" method="post">
+                        {{ form.hidden_tag() }}
+                        {{ form.submit(value=_("Follow"), class="dropdown-item") }}
+                    </form>
+                    {% endif %}
+                </ul>
             </div>
         </div>
-        {% elif current_user.is_authenticated and current_user.is_following(post.author) %}
-        <div class="deleteFollowUnfollow">
-            <form action="{{ url_for('main.unfollow', username=post.author.username) }}" method="post">
-                {{ form.hidden_tag() }}
-                {{ form.submit(value=_("Unfollow"), class="btn btn-outline-primary btn-sm") }}
-            </form>
-            
-            
+    </div>
+</div>
+<!--Delete Modal-->
+<div class="modal fade" id="deleteModal{{ post.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">{{ _('Confirm Delete') }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+            </div>
+            <div class="modal-body">
+                {{ _('Are you sure you want to delete this post?') }} <br><br>
+                <div class="vr"></div>
+                {{ post.body }} 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Close') }}</button>
+                <form action="{{ url_for('main.delete', postID = post.id) }}" method="post">
+                    {{ form.hidden_tag() }}
+                    {{ form.submit(value=_('Delete'), class="delete btn btn-outline-danger") }}
+                </form>
+            </div>
         </div>
-        {% elif current_user.is_authenticated and not current_user.is_following(post.author) %}
-        <div class="deleteFollowUnfollow">
-            <form action="{{ url_for('main.follow', username=post.author.username) }}" method="post">
-                {{ form.hidden_tag() }}
-                {{ form.submit(value=_("Follow"), class="btn btn-outline-primary btn-sm") }}
-            </form>
-            
-        </div>
-        {% endif %} 
-        </div>            
-    </table>
+    </div>
 </div>
