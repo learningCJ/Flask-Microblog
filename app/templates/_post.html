@@ -27,6 +27,7 @@
                 {% endif %}
             {% endif %}
         </div>
+        {% if current_user.is_authenticated %}
         <div class="flex-shrink-1">
             <div class ="dropdown">
                 <a class="dropdown-toggle" href="#" id="postDropDownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></a>
@@ -47,6 +48,7 @@
                 </ul>
             </div>
         </div>
+        {% endif %}
     </div>
 </div>
 <!--Delete Modal-->
