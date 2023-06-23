@@ -1,32 +1,212 @@
 {% extends 'base.html' %}
 {% block content %}
-    <section id="about" class="container">
-        <h1 class="display-4">Chris Jeong</h1>
-        <p></p>
-        <p>
-            <strong>Skills:</strong>
-            <span class="badge text-bg-primary">Flask</span>
-            <span class="badge text-bg-primary">HTML</span>
-            <span class="badge text-bg-primary">Python</span>
-            <span class="badge text-bg-primary">SQL</span>
-            <span class="badge text-bg-primary">SQLAlchemy</span>
-            <span class="badge text-bg-primary">CSS</span>
-            <span class="badge text-bg-primary">JavaScript</span>
-        </p>
-    </section>
-    <section id="project" class="container">
-        <div class="card">
-            <div class="card-header collapse show", data-bs-toggle="collapse", >
-                <div class="row">
-                    <h5 class="col-md-8 mb-0"><a data-bs-toggle="collapse" href="#proj1" data-target="#proj1" aria-expanded="false" aria-controls="proj1">ChrisJeong.one</a></h5>
-                    <em class="col-md-4 text-md-right">January 2023 - Current</em>
+    <!--About-->
+    <section class="resume-section" id="about">
+        <div class="resume-section-content">
+            <div class="d-flex bd-highlight flex-column flex-md-row justify-content-between mb-5">
+                <div class="flex-fill bd-highlight">
+                    <h1 class="text-start m-0 mb-3 resume-name">Chris Jeong</h1>
+                    <p class="m-0 p-0 text-start">
+                        <strong>Skills:</strong>
+                        <span class="badge text-bg-primary">Flask</span>
+                        <span class="badge text-bg-primary">Python</span>
+                        <span class="badge text-bg-primary">SQL</span>
+                        <span class="badge text-bg-primary">SQLAlchemy</span>
+                        <span class="badge text-bg-primary">HTML</span>
+                        <span class="badge text-bg-primary">CSS</span>
+                        <span class="badge text-bg-primary">JavaScript</span>
+                    </p>
+                    <br>
+                </div>
+                <div class="flex-fill bd-highlight text-start">
+                    <p><i class="bi bi-globe"></i> <a href="https://chrisjeong.one/about" target="_blank"> chrisjeong.one/about</a></p>
+                    <p><i class="bi bi-envelope"></i> <a href="mailto:cjeong07@gmail.com" target="_blank"> cjeong07@gmail.com</a></p>
+                    <p><i class="bi bi-github"></i> <a href="https://github.com/learningCJ" target="_blank"> github.com/learningCJ</a></p>
+                    <p><i class="bi bi-linkedin"></i> <a href="https://www.linkedin.com/in/chrisheechuljeong/" target="_blank"> www.linkedin.com/in/chrisheechuljeong/</a></p>
                 </div>
             </div>
-            <div class="collapse" id="proj1">
+        </div>
+    </section>
+    <!--End of about-->
+    <hr>
+    <!--start of projects-->
+    <section class="resume-section" id="project">
+        <div class="resume-section-content">
+            <h2 class="mb-5 resume-header">Project</h2>
+            <!--chrisjeong.one-->
+            <div class="d-flex flex-column flex-md-row justify-content-between mb-2">
+                <div class="flex-grow-1">
+                    <h5 class="mb-0 job-title">chrisjeong.one</h5>
+                </div>
+                <div class="flex-shrink-0">
+                    <div class="flex-shrink-0 dateCol">
+                        <div class="flex">Jan 2023 - Current</div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex-column flex-md-row justify-content-between mb-3 ps-3 job-desc">
                 <ul>
-                    <li>Developed and deployed a microblog web app from end to end using Flask, HTML, CSS, Bootstrap5, and JavaScript. The app was deployed on an ARM based Virtual Machine (Oracle Cloud)</li>
+                    <li>
+                        Developed and deployed a microblog web app from end to end using Flask, HTML, CSS, Bootstrap5, and JavaScript. The app was deployed on Oracle Cloud ARM based Virtual Machine 
+                    </li>
+                    <li>
+                        Some features include, but not limited to: registration (including email confirmation to gain access to all features), password recovery using JSON Web Token (JWT), posting, deleting own posts, user profile for account and post management, follow and unfollow users, translate posts, pagination, and search 
+                    </li>
+                    <li>
+                        Worked on backend development tasks such as database design, server-side scripting, and building RESTful API to ensure efficiency, security, and portability of the codebase
+                    </li>
+                    <li>
+                        By implementing SQLAlchemy, the code related to interacting with the database was made easier to read, more abstract, and portable. This allowed for the site to be developed in SQLite and then switched to MySQL once deployed, without requiring any additional lines of code
+                    </li>
+                    <li>
+                        Accommodated database schema changes using Flask-Migrate extension. This not only facilitated development but also streamlined the deployment process, resulting in a more efficient and error-free process
+                    </li>
+                    <li>
+                        Implemented the translation feature by integrating the Microsoft Translation API into the application using server-side scripting, jQuery,  and AJAX to enable translation of text into multiple languages
+                    </li>
+                    <li>
+                        Implemented URL routing, redirecting, and rendering pages onto templates using the built-in Flask functions
+                    </li>
+                    <li>
+                        Designed and implemented front-end components using HTML, CSS, and Bootstrap 5 for responsive web design
+                    </li>
+                    <li>
+                        Further modularized the codebase using Blueprint in Flask for portability
+                    </li>
+                    <li>
+                        Used Git and GitHub to maintain version control and code in new branches for robustness and accuracy of archives, which ensured smooth and streamlined feature/bug-fix deployments
+                    </li>
                 </ul>
             </div>
         </div>
     </section>
+    <!--End of Project-->
+    <hr>
+    <!--Experience-->
+    <section class="resume-section" id="experience">
+        <div class="resume-section-content">
+            <h2 class="mb-5 resume-header">Experience</h2>
+            <!--Yamana-->
+            <div class="d-flex flex-column flex-md-row justify-content-between mb-2">
+                <div class="flex-grow-1">
+                    <h5 class="mb-0 job-title">Manager - FP&A</h5>
+                    <h5 class="mb-0 job-title">Senior Financial Analyst - FP&A</h5>
+                    <div class="subheading mb-0">Yamana Gold Inc.</div>
+                </div>
+                <div class="flex-shrink-0">
+                    <div class="flex-shrink-0 dateCol">
+                        <div class="flex">Jul 2020 - Apr 2022</div>
+                        <div class="flex">Aug 2016 - Jul 2020</div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex-column flex-md-row justify-content-between mb-3 ps-3 job-desc">
+                <ul>
+                    <li>
+                        Developed and maintained calculation scripts for financial planning, budgeting, and Key Performance Indicators (KPIs) using Essbase Calculation Script Language (ECSL) to increase accuracy and consistency
+                    </li>
+                    <li>
+                        Automated administrative tasks for data load to Hyperion Planning Database from JDEdwards ERP to increase accuracy and prevent data losses from human-error
+                    </li>
+                    <li>
+                        Led the Power BI dashboard implementation including data pipeline from Essbase Planning Software and JDE ERP program into Power BI. Programmed calculation measures and created the visualization from scratch. Upon the successful completion of the project, it was used by Senior Executives (c-suite), controllers, GMs, FP&A, and Procurement and ensured that their data was always consistent and up-to-date as they did not have different Excel file versions. This dashboard was also used to provide more colour around the impact of inflationary pressures to the company&#39;s bottom line during the investor calls 
+                    </li>
+                    <li>
+                        Work closely with various stakeholders, including the Senior Executives, controllers, GMs, operational groups, and Hyperion developers to create and refine Key Performance Indicators in order to draw more accurate mine performance insights
+                    </li>
+                    <li>
+                        Demonstrated strong presentation skill through presenting in front of both technical and non-technical audience, excluding senior executives, Hyperion developers, controllers, and GMs
+                    </li>
+                    <li>
+                        Train and review two Senior Financial Analysts around mine processes, Power BI, Hyperion, and Excel models
+                    </li>
+                </ul>
+            </div>
+            <!--end of Yamana-->
+
+            <!--EY-->
+            <div class="d-flex flex-column flex-md-row justify-content-between mb-2">
+                <div class="flex-grow-1">
+                    <h5 class="mb-0 job-title">Senior Staff - Advisory Services</h5>
+                    <div class="subheading mb-0">Ernst & Young</div>
+                </div>
+                <div class="flex-shrink-0">
+                    <div class="flex-shrink-0 dateCol">
+                        <div class="flex">Nov 2013 - Aug 2016</div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex-column flex-md-row justify-content-between mb-3 ps-3 job-desc">
+                <ul>
+                    <li>
+                        Analyzed large journal entry data by building a database in SQL Server Management and using SQL queries to verify that the daily Commercial Mortgage-Backed Securities trust fund balances are in compliance with government regulations
+                    </li>
+                    <li>
+                        Programmed in Visual Basic Excel Macro to convert export files from clients&#39; journal entries to a format for relational database (SQL in this case) to increase the speed and accuracies over manual process
+                    </li>
+                </ul>
+            </div>
+            <!--end of EY-->
+        </div>
+    </section>
+    <!--End of Experience-->
+    <hr>
+    <!--Certification-->
+    <section class="resume-section" id="certificaton">
+        <div class="resume-section-content">
+            <h2 class="mb-5 resume-header">Certifications</h2>
+            <!--Microsoft Azure Fundamentals-->
+            <div class="d-flex flex-column flex-md-row justify-content-between mb-2">
+                <div class="flex-grow-1">
+                    <h5 class="mb-0 job-title">Azure Fundamentals (AZ900)</h5>
+                    <div class="subheading mb-0">Microsoft</div>
+                </div>
+                <div class="flex-shrink-0">
+                    <div class="flex-shrink-0 dateCol">
+                        <div class="flex">2023</div>
+                    </div>
+                </div>
+            </div>
+            <!--end of MSFT Azure-->
+            <br>
+            <!--CFA-->
+            <div class="d-flex flex-column flex-md-row justify-content-between mb-2">
+                <div class="flex-grow-1">
+                    <h5 class="mb-0 job-title">CFA Charterholder</h5>
+                    <div class="subheading mb-0">CFA Institute</div>
+                </div>
+                <div class="flex-shrink-0">
+                    <div class="flex-shrink-0 dateCol">
+                        <div class="flex">2018</div>
+                    </div>
+                </div>
+            </div>
+            <!--end of CFA-->
+        </div>
+    </section>
+    <!--End of Certification-->
+    <hr>
+    <!--Education-->
+    <section class="resume-section" id="education">
+        <div class="resume-section-content">
+            <h2 class="mb-5 resume-header">Education</h2>
+            <!--chrisjeong.one-->
+            <div class="d-flex flex-column flex-md-row justify-content-between mb-2">
+                <div class="flex-grow-1">
+                    <h5 class="mb-0 job-title">Honours Bachelor of Mathematics with Distinction</h5>
+                    <ul>
+                        <li>Financial Analysis and Risk Management Co-op Program</li>
+                        <li>Computer Science Minor</li>
+                    </ul>
+                    <div class="subheading mb-0">University of Waterloo</div>
+                </div>
+                <div class="flex-shrink-0">
+                    <div class="flex-shrink-0 dateCol">
+                        <div class="flex">2013</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--End of Education-->
 {% endblock %}

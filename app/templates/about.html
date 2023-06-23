@@ -28,31 +28,31 @@
     </form>
     {% endif %}
     <br>
-    <h2>{{_('About Chris')}}</h2>
+    <h2 id="about-Chris">{{_('About Chris')}}</h2>
     {% include "aboutChris.html" %}
-    <a href="/resume">Resume</a>
+    <a href="/resume" class="btn btn-outline-primary">View Resume</a>
     <br>
     <br>
-    <h2>{{_('Under the Hood')}}</h2>
-    {% if techs %}
-        {% for tech in techs %}
-            {% if tech.category =="Software" %}
-            {% include "_tech.html" %}
-            {% endif %}
-        {% endfor %}
-        <br>
-        <h2>{{_('Infrastructure')}}</h2>
-        {% for tech in techs%}
-            {% if tech.category =="Infrastructure" %}
-            {% include "_tech.html" %}
-            {% endif %}
-        {% endfor %}
-    {% endif %}
+    <section>
+        <h2 id="about-the-site">{{_('Under the Hood')}}</h2>
+        {% if techs %}
+                <table class="table" id="techTable">
+                {% for tech in techs %}
+                    {% if tech.category =="Software" %}
+                    {% include "_tech.html" %}
+                    {% endif %}
+                {% endfor %}
+                </table>
+            <br>
+            <h2>{{_('Infrastructure')}}</h2>
+                <table class="table" id="techTable">
+                    {% for tech in techs%}
+                        {% if tech.category =="Infrastructure" %}
+                        {% include "_tech.html" %}
+                        {% endif %}
+                    {% endfor %}
+                </table>
+        {% endif %}
+    </section>
 </br>
 {% endblock %}
-
-
-
-techType
-techName
-category

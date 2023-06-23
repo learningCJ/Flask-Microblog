@@ -1,3 +1,9 @@
+:root {
+    --bs-body-font-family: Muli, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    --bs-body-font-size: 1rem;
+
+}
+
 body {
     padding-top: 2rem;
 }
@@ -43,9 +49,6 @@ body {
     width: 30%;
 }
 
-#techTable{
-    width: 90%;
-}
 
 @media only screen and (max-width: 1200px) {
     #techNameCol {
@@ -53,20 +56,70 @@ body {
     }
 }
 
-#about {
-    text-align: center;
-    padding: 40px;
+.resume-header, .resume-name, .job-title{
+    font-family: Muli, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    text-transform: uppercase;
+    color:#343a40;
 }
-#about img {
-width: 200px;
-border-radius: 100%;
+
+section.resume-section {
+    display: flex;
+    align-items: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    max-width: 75rem;
+    color: #343a40;
 }
-#about h1 {
-margin: 25px;
+section.resume-section .resume-section-content {
+    width: 100%;
 }
-section {
-padding-bottom: 40px;
+  
+.dateCol{
+    flex-direction: column;
+    color: #6c757d;
 }
-.card .card-header {
-cursor: pointer;
+
+.resume-name {
+    font-size: calc(1.725rem + 2vw);
+}
+@media (min-width: 1200px) {
+    .resume-name {
+      font-size: 4rem;
+    }
+}
+
+.subheading {
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    color:#6c757d
+}
+
+.job-desc {
+    margin: 0;
+    font-family: var(--bs-body-font-family);
+    font-size: var(--bs-body-font-size);
+    font-weight: var(--bs-body-font-weight);
+    line-height: var(--bs-body-line-height);
+    color: var(--bs-body-color);
+    text-align: var(--bs-body-text-align);
+    background-color: var(--bs-body-bg);
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.follow-unfollow{
+    background-color: transparent;
+    text-decoration: underline;
+    border: none;
+    color: blue;
+    cursor: pointer;
+}
+follow-unfollow:focus{
+    outline: none;
+}
+
+.post-span{
+    margin-bottom: 0.3rem;
 }

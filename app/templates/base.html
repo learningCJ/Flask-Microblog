@@ -12,6 +12,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
         <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
         <script>
             function translate(sourceElem, destElem, sourceLang, destLang) {
@@ -29,17 +30,22 @@
         </script>
         <script type="text/javascript" src="{{ url_for('static', filename='javascript/auth.js') }}"></script>
         <link href="{{ url_for('static',filename='styles/mystyle.css') }}" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:500,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet" type="text/css" />
         {{ moment.include_moment() }}
         {{ moment.lang(g.locale) }}
     </head>
     <body>
+        <!--navbar-->
         <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand abs" href="{{ url_for('main.index') }}">{{ _('ChrisJeong.one') }}</a>
                 <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-            
+                <!--left side of the navbar-->
                 <div class="navbar-collapse collapse" id="navbarCollapse">
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <li class="nav-item active">
@@ -48,14 +54,19 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('main.explore') }}">{{ _('Explore') }}</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('main.about') }}">{{ _('About') }}</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarAboutDropDownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{_('About')}}
+                            </a> 
+                            <ul class="dropdown-menu" aria-labelledby="navbarAboutDropDownMenu">
+                                <li><a class="nav-link" href="{{ url_for('main.about') + '#about-Chris' }}">{{ _('About Chris') }}</a></li>
+                                <li><a class="nav-link" href="{{ url_for('main.resume') }}">{{ _('View Resume') }}</a></li>
+                                <li><a class="nav-link" href="{{ url_for('main.about') + '#about-the-site' }}">{{ _('Under the Hood') }}</a></li>
+                            </ul>
                         </li>
-                        
-                        
                     </ul>
+                    <!--right side of the navbar-->
                     <ul class="navbar-nav ms-auto">
-                       
                         {% if current_user.is_anonymous %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
@@ -81,7 +92,7 @@
         </nav>
         <br>
 
-        <main class="container">
+        <main class="container-fluid p-4">
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     <div class="alert alert-primary" role="alert">
@@ -92,7 +103,9 @@
                 {% endif %}
             {% endwith %}
             <br>
+            <section class="post-section">
             {% block content %}{% endblock %}
+            </section>
         </main>
     </body>
 
