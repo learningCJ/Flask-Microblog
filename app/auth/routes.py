@@ -81,7 +81,6 @@ def reset_password(token):
 def confirm_registration_request():
     send_password_confirm_reset_email(current_user, 'register')
     flash(_('Confirmation email has been sent. Please check your email'))
-    print(current_user.username)
     return redirect(url_for('main.user', username=current_user.username))
 
 @bp.route('/confirm_registration/<token>', methods = ['GET', 'POST'])
