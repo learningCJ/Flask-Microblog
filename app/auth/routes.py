@@ -54,7 +54,10 @@ def reset_password_request():
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
         user = db.session.scalar(sa.select(User).filter_by(email=form.email.data))
-        if user is not None and user.isVerified:
+        if not user.isVerified:
+            flash(_('Account email has not been verified due to security.'))
+            return redirect(url_for('auth.login'))
+        if user is not None:
             send_password_confirm_reset_email(user, 'reset')
         flash(_('Please check your email for instructions on how to reset the password'))
         return redirect(url_for('auth.login'))
@@ -62,11 +65,12 @@ def reset_password_request():
 
 @bp.route('/reset_password/<token>', methods = ['GET', 'POST'])
 def reset_password(token):
-    if current_user.is_authenticated:
-        return redirect(url_for('auth.login'))
     user = User.verify_token(token)
     if user is None:
         flash(_('The URL was invalid. If this is an error, please contact the administrator'))
+        return redirect(url_for('auth.login'))
+    if current_user.is_authenticated and current_user != user:
+        flash(_('The password reset request was for another account. Please log out and try again'))
         return redirect(url_for('auth.login'))
     form = ResetPasswordForm(user)
     if form.validate_on_submit():
@@ -94,7 +98,12 @@ def confirm_registration(token):
     flash(_('Your registration is confirmed'))
     return redirect(url_for('main.index'))
 
-
+@bp.route('/update_pw_request', methods=['GET', 'POST'])
+@login_required
+def update_pw_request():
+    send_password_confirm_reset_email(current_user, 'reset')
+    flash(_('Please check your email for instructions on how to reset the password'))
+    return redirect(url_for('main.user', username=current_user.username))
 
 
 

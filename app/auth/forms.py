@@ -81,6 +81,7 @@ class ResetPasswordForm(FlaskForm):
 
     password = PasswordField(_l('Enter New Password'), validators=[DataRequired(), Length(min=8)])
     password_confirm = PasswordField(_l('Please Confirm your New Password'), validators=[EqualTo('password'), DataRequired()])
+    show_pw = BooleanField(_l('Show Password'))
     submit = SubmitField(_l('Reset Password'))
 
     def validate_password(self, password):
