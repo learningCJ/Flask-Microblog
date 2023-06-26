@@ -27,22 +27,23 @@
                 {% endif %}
             {% endif %}
         </div>
+        <!--3 dot contextual menu-->
         {% if current_user.is_authenticated %}
         <div class="flex-shrink-1">
             <div class ="dropdown">
-                <a class="dropdown-toggle" href="#" id="postDropDownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></a>
-                <ul class="dropdown-menu" aria-labelledby="postDropDownMenuLink">
+                <a class="dropdown-toggle" id="postDropDownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postDropDownMenuLink">
                     {% if current_user == post.author %}
                     <li><a class="dropdown-item" href="#deleteModal{{ post.id }}" data-bs-toggle="modal">{{ _('Delete') }}</a></li>
                     {% elif current_user.is_authenticated and current_user.is_following(post.author) %}
                     <form action="{{ url_for('main.unfollow', username=post.author.username) }}" method="post">
                         {{ form.hidden_tag() }}
-                        {{ form.submit(value=_("Unfollow"), class="dropdown-item") }}
+                        {{ form.submit(value=_("Unfollow " + post.author.username), class="dropdown-item") }}
                     </form>
                     {% elif current_user.is_authenticated and not current_user.is_following(post.author) %}
                     <form action="{{ url_for('main.follow', username=post.author.username) }}" method="post">
                         {{ form.hidden_tag() }}
-                        {{ form.submit(value=_("Follow"), class="dropdown-item") }}
+                        {{ form.submit(value=_("Follow " + post.author.username), class="dropdown-item") }}
                     </form>
                     {% endif %}
                 </ul>
