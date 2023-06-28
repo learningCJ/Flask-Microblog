@@ -17,7 +17,11 @@
             <span style="color:red;">{{ error }}</span><br>
             {% endfor %}
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                {% if not current_user.isVerified %}
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#msgModal">Submit</button>
+                {% elif current_user.isVerified %}
                 {{ form.submit(class="btn btn-outline-primary") }}
+                {% endif %}
             </div>
         </form>
     </p>
@@ -51,4 +55,21 @@
             {% endif %}
         </ul>
     </nav>
+    <!--Modal for Users without confirmed email-->
+    <div class="modal fade" id="msgModal" tabindex="-1" aria-labelledby="msgModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="msgModalLabel">{{ _('Email Confirmation Required') }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+                </div>
+                <div class="modal-body">
+                    {{ _('Please confirm your email from the Profile Page before posting') }} <br><br>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Close') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

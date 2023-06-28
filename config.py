@@ -17,6 +17,7 @@ class Config(object):
 
     MAIL_PASSWORD = os.environ.get('SENDGRID_API_KEY')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
+    MAIL_SUPPORT_SENDER = os.environ.get('MAIL_SUPPORT_SENDER')
 
     POSTS_PER_PAGE=10
 

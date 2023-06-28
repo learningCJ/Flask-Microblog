@@ -69,6 +69,7 @@ section.resume-section {
     padding-right: 1rem;
     padding-top: 3rem;
     padding-bottom: 3rem;
+    max-width: 75rem;
     color: #343a40;
 }
 section.resume-section .resume-section-content {
@@ -121,4 +122,8 @@ follow-unfollow:focus{
 
 .post-span{
     margin-bottom: 0.3rem;
+}
+
+hr{
+    max-width: 75rem;
 }

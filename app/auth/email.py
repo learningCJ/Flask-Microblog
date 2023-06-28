@@ -8,7 +8,7 @@ def send_password_confirm_reset_email(user, reqType):
     if reqType.lower() == "reset":
         send_email(_('[Microblog]Reset Password'),
                 recipients=[user.email],
-                sender=current_app.config['MAIL_DEFAULT_SENDER'],
+                sender=current_app.config['MAIL_SUPPORT_SENDER'],
                 body_text=render_template('email/reset_password.txt', user=user, token=token),
                 body_html=render_template('email/reset_password.html', user=user, token=token)
                 )
@@ -16,7 +16,7 @@ def send_password_confirm_reset_email(user, reqType):
     elif reqType.lower() == "register":
         send_email(_('[Microblog]Confirm Registration'),
                 recipients=[user.email],
-                sender=current_app.config['MAIL_DEFAULT_SENDER'],
+                sender=current_app.config['MAIL_SUPPORT_SENDER'],
                 body_text=render_template('email/confirm_registration.txt', user=user, token=token),
                 body_html=render_template('email/confirm_registration.html', user=user, token=token)
                 )
