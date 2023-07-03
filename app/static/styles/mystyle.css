@@ -124,6 +124,10 @@ follow-unfollow:focus{
     margin-bottom: 0.3rem;
 }
 
-hr{
+
+
+main{
     max-width: 75rem;
+    margin-right:auto;
+    margin-left:auto;
 }
