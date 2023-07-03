@@ -18,7 +18,7 @@ addEventListener("DOMContentLoaded", (event) => {
     conf.classList.add("wrong");
 
     password.addEventListener("focus", () => {
-        if (!passwordAlert.classlist.contains("is-valid")){
+        if (!passwordAlert.classList.contains("is-valid")){
             passwordAlert.classList.add("alert-warning");
         }
         //passwordAlert.classList.remove("d-none");
@@ -28,7 +28,7 @@ addEventListener("DOMContentLoaded", (event) => {
     });
 
     password_confirm.addEventListener("focus", () => {
-        if (!passwordConfirmAlert.classlist.contains("is-valid")){
+        if (!passwordConfirmAlert.classList.contains("is-valid")){
             passwordConfirmAlert.classList.add("alert-warning");
         }
         //passwordAlert.classList.remove("d-none");
