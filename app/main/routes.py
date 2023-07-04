@@ -1,7 +1,7 @@
 from app import db
 from flask import render_template, flash,redirect, url_for, request, g, jsonify, current_app
 from flask_login import login_required, current_user
-from app.auth.forms import EditProfileForm, EmptyForm
+from app.main.forms import EditProfileForm, EmptyForm
 import sqlalchemy as sa
 from app.models import User, Post, TechStack
 from datetime import datetime
@@ -9,7 +9,7 @@ from flask_babel import _, get_locale
 from langdetect import detect, LangDetectException
 from app.translate import translate
 from app.main import bp
-from app.main.forms import SearchForm, AboutSiteForm,PostForm
+from app.main.forms import SearchForm, AboutSiteForm, PostForm
 import re
 
 @bp.before_request

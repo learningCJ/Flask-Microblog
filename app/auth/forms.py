@@ -51,25 +51,6 @@ class RegistrationForm(FlaskForm):
         if not re.search('[a-z]', password.data):
             raise ValidationError(_('Password must contain at least 1 lower case letter'))
 
-class EditProfileForm(FlaskForm):
-
-    def __init__(self, original_username, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.original_username = original_username
-
-    username = StringField(_l('Username'), validators=[DataRequired()])
-    about_me = TextAreaField(_l('About Me'), validators=[Length(min=0, max=140)])
-    submit = SubmitField(_l('Submit'))
-
-    def validate_username(self, username):
-        if username.data != self.original_username: 
-            user = db.session.scalar(sa.select(User).filter_by(username=username.data))
-            if user is not None:
-                raise ValidationError(_('Username already exists! Please choose another name'))
-            
-class EmptyForm(FlaskForm):
-    submit = SubmitField(_l("Submit"))
-
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])
     submit = SubmitField(_l('Request Password Reset'))
