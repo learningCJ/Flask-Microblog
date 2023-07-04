@@ -1,83 +1,73 @@
 addEventListener("DOMContentLoaded", (event) => {
-    const password = document.getElementById("floatingPW");
-    const password_confirm = document.getElementById("floatingPWConf")
+    const passwordField = document.getElementById("floatingPW");
+    const pwConfirmField = document.getElementById("floatingPWConf")
     const passwordAlert = document.getElementById("password-alert");
     const passwordConfirmAlert = document.getElementById("passwordConfirm-alert");
     const requirements = document.querySelectorAll(".requirements");
-    let lengBoolean, bigLetterBoolean, numBoolean, specialCharBoolean, lowerCaseBoolean, confirmEqualBoolean;
-    let conf = document.querySelector(".confirmReq")
-    let leng = document.querySelector(".leng");
-    let bigLetter = document.querySelector(".big-letter");
-    let num = document.querySelector(".num");
-    let specialChar = document.querySelector(".special-char");
+    let lengBoolean, hasCapital, hasNum, hasSpecialChar, hasLowerCase;
+    let confirmValidator = document.querySelector(".confirmReq")
+    let lengValidator = document.querySelector(".leng");
+    let capLetterValidator = document.querySelector(".big-letter");
+    let numValidator = document.querySelector(".num");
+    let specialCharValidator = document.querySelector(".special-char");
     let lowerCaseLetter = document.querySelector(".lowercase-letter");
-    const specialChars = "!@#$%^&-_"//"!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~";
-    const numbers = "0123456789";
 
     requirements.forEach((element) => element.classList.add("wrong"));
-    conf.classList.add("wrong");
+    confirmValidator.classList.add("wrong");
 
-    password.addEventListener("focus", () => {
+    passwordField.addEventListener("focus", () => {
         if (!passwordAlert.classList.contains("is-valid")){
             passwordAlert.classList.add("alert-warning");
         }
-        //passwordAlert.classList.remove("d-none");
-        //if (!password.classList.contains("is-valid")) {
-        //    password.classList.add("is-invalid");
-        //}
     });
 
-    password_confirm.addEventListener("focus", () => {
+    pwConfirmField.addEventListener("focus", () => {
         if (!passwordConfirmAlert.classList.contains("is-valid")){
             passwordConfirmAlert.classList.add("alert-warning");
         }
-        //passwordAlert.classList.remove("d-none");
-        //if (!password.classList.contains("is-valid")) {
-        //    password.classList.add("is-invalid");
-        //}
     });
 
-    password.addEventListener("input", () => {
-        let value = password.value;
+    passwordField.addEventListener("input", () => {
+        let value = passwordField.value;
         if (value.length < 8) {
             lengBoolean = false;
-        } else if (value.length > 7) {
+            lengValidator.classList.add("wrong");
+            lengValidator.classList.remove("good");
+        } else {
             lengBoolean = true;
+            lengValidator.classList.add("good");
+            lengValidator.classList.remove("wrong");
         }
 
         if (value.toLowerCase() == value) {
-            bigLetterBoolean = false;
+            hasCapital = false;
+            capLetterValidator.classList.add("wrong");
+            capLetterValidator.classList.remove("good");
         } else {
-            bigLetterBoolean = true;
+            hasCapital = true;
+            capLetterValidator.classList.add("good");
+            capLetterValidator.classList.remove("wrong");
         }
 
         if (value.toUpperCase() == value) {
-            lowerCaseBoolean = false;
+            hasLowerCase = false;
+            lowerCaseLetter.classList.add("wrong");
+            lowerCaseLetter.classList.remove("good");
         } else {
-            lowerCaseBoolean = true;
+            hasLowerCase = true;
+            lowerCaseLetter.classList.add("good");
+            lowerCaseLetter.classList.remove("wrong");
         }
 
-        numBoolean = false;
-        for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < numbers.length; j++) {
-                if (value[i] == numbers[j]) {
-                    numBoolean = true;
-                }
-            }
-        }
+        var numRegex = /\d/;
+        hasNum = numRegex.test(value)
 
-        specialCharBoolean = false;
-        for (let i = 0; i < value.length; i++) {
-            for (let j = 0; j < specialChars.length; j++) {
-                if (value[i] == specialChars[j]) {
-                    specialCharBoolean = true;
-                }
-            }
-        }
+        var specRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\`\~]/;
+        hasSpecialChar = specRegex.test(value)
 
-        if (lengBoolean == true && bigLetterBoolean == true && numBoolean == true && specialCharBoolean == true && lowerCaseBoolean == true) {
-            password.classList.remove("is-invalid");
-            password.classList.add("is-valid");
+        if (lengBoolean && hasCapital && hasNum && hasSpecialChar && hasLowerCase) {
+            passwordField.classList.remove("is-invalid");
+            passwordField.classList.add("is-valid");
 
             requirements.forEach((element) => {
                 element.classList.remove("wrong");
@@ -86,81 +76,46 @@ addEventListener("DOMContentLoaded", (event) => {
             passwordAlert.classList.remove("alert-warning");
             passwordAlert.classList.add("alert-success");
         } else {
-            password.classList.remove("is-valid");
-            password.classList.add("is-invalid");
+            passwordField.classList.remove("is-valid");
+            passwordField.classList.add("is-invalid");
 
             passwordAlert.classList.add("alert-warning");
             passwordAlert.classList.remove("alert-success");
 
-            if (lengBoolean == false) {
-                leng.classList.add("wrong");
-                leng.classList.remove("good");
+            if (hasNum == false) {
+                numValidator.classList.add("wrong");
+                numValidator.classList.remove("good");
             } else {
-                leng.classList.add("good");
-                leng.classList.remove("wrong");
+                numValidator.classList.add("good");
+                numValidator.classList.remove("wrong");
             }
 
-            if (bigLetterBoolean == false) {
-                bigLetter.classList.add("wrong");
-                bigLetter.classList.remove("good");
+            if (hasSpecialChar == false) {
+                specialCharValidator.classList.add("wrong");
+                specialCharValidator.classList.remove("good");
             } else {
-                bigLetter.classList.add("good");
-                bigLetter.classList.remove("wrong");
-            }
-
-            if (numBoolean == false) {
-                num.classList.add("wrong");
-                num.classList.remove("good");
-            } else {
-                num.classList.add("good");
-                num.classList.remove("wrong");
-            }
-
-            if (specialCharBoolean == false) {
-                specialChar.classList.add("wrong");
-                specialChar.classList.remove("good");
-            } else {
-                specialChar.classList.add("good");
-                specialChar.classList.remove("wrong");
-            }
-            if (lowerCaseBoolean == false) {
-                lowerCaseLetter.classList.add("wrong");
-                lowerCaseLetter.classList.remove("good");
-            } else {
-                lowerCaseLetter.classList.add("good");
-                lowerCaseLetter.classList.remove("wrong");
+                specialCharValidator.classList.add("good");
+                specialCharValidator.classList.remove("wrong");
             }
         }
     });
 
-    /*password.addEventListener("blur", () => {
-        passwordAlert.classList.add("d-none");
-    });*/
-
-    password_confirm.addEventListener("input", () => {
-        let value = password_confirm.value;
-        confirmEqualBoolean = false
-        if (value === password.value) {
-            confirmEqualBoolean = true;
-        } else  {
-            confirmEqualBoolean = false;
-        }
-
-        if (confirmEqualBoolean == true) {
-            password_confirm.classList.remove("is-invalid");
-            password_confirm.classList.add("is-valid");
+    pwConfirmField.addEventListener("input", () => {
+        let value = pwConfirmField.value;
+        if (value === passwordField.value) {
+            pwConfirmField.classList.remove("is-invalid");
+            pwConfirmField.classList.add("is-valid");
             passwordConfirmAlert.classList.remove("alert-warning");
             passwordConfirmAlert.classList.add("alert-success");
-            conf.classList.remove("wrong");
-            conf.classList.add("good");
-
-        } else {
-            password_confirm.classList.remove("is-valid");
-            password_confirm.classList.add("is-invalid");
+            confirmValidator.classList.remove("wrong");
+            confirmValidator.classList.add("good");
+        } else  {
+            pwConfirmField.classList.remove("is-valid");
+            pwConfirmField.classList.add("is-invalid");
             passwordConfirmAlert.classList.remove("alert-success");
             passwordConfirmAlert.classList.add("alert-warning");
-            conf.classList.remove("good");
-            conf.classList.add("wrong");
+            confirmValidator.classList.remove("good");
+            confirmValidator.classList.add("wrong");
         }
     });
 });

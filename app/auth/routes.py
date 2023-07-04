@@ -67,7 +67,7 @@ def reset_password_request():
 def reset_password(token):
     user = User.verify_token(token)
     if user is None:
-        flash(_('The URL was invalid. If this is an error, please contact the administrator'))
+        flash(_('The token was invalid or the link expired. You can request for a new link from your Profile page'))
         return redirect(url_for('auth.login'))
     if current_user.is_authenticated and current_user != user:
         flash(_('The password reset request was for another account. Please log out and try again'))
@@ -101,6 +101,9 @@ def confirm_registration(token):
 @bp.route('/update_pw_request', methods=['GET', 'POST'])
 @login_required
 def update_pw_request():
+    if not current_user.is_verified():
+        flash(_('You must first confirm your email before you can reset the email'))
+        return redirect(url_for('main.user', username=current_user.username))
     send_password_confirm_reset_email(current_user, 'reset')
     flash(_('Please check your email for instructions on how to reset the password'))
     return redirect(url_for('main.user', username=current_user.username))
