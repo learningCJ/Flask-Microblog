@@ -29,3 +29,4 @@ class Config(object):
     ELASTICSEARCH_PW = os.environ.get('ELASTICSEARCH_PW')
     ELASTICSEARCH_CERT_DIR = os.environ.get('ELASTICSEARCH_CERT_DIR')
     ADMIN = os.environ.get('ADMIN')
+    MIN_PW_LEN = 8

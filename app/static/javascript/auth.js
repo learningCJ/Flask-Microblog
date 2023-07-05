@@ -1,124 +1,111 @@
+let successFieldCSS = "is-valid"
+let errorFieldCSS = "is-invalid"
+let successAlertCSS = "alert-success"
+let errorAlertCSS = "alert-warning"
+let successPolicyCSS = "good"
+let errorPolicyCSS = "wrong"
+
+function fieldUpdate(domElement, addCls, removeCls = null){
+    domElement.classList.remove(removeCls);
+    domElement.classList.add(addCls);
+}
+
+function verifyElem (domElemObj, value){
+    domElemObj.pass = domElemObj.regexpr.test(value)
+    if (domElemObj.pass){
+        fieldUpdate(domElemObj.elem, successPolicyCSS, errorPolicyCSS)
+    }
+    else{
+        fieldUpdate(domElemObj.elem, errorPolicyCSS, successPolicyCSS)
+    }
+}
+
+function allPass(lstElem){
+    let boolAllPass = true
+    lstElem.forEach(function(lst){
+        if (lst.pass === false){
+            boolAllPass = false
+            return boolAllPass;
+        }
+    });
+    return boolAllPass 
+}
+
+
 addEventListener("DOMContentLoaded", (event) => {
     const passwordField = document.getElementById("floatingPW");
     const pwConfirmField = document.getElementById("floatingPWConf")
     const passwordAlert = document.getElementById("password-alert");
-    const passwordConfirmAlert = document.getElementById("passwordConfirm-alert");
+    const pwConfirmAlert = document.getElementById("passwordConfirm-alert");
     const requirements = document.querySelectorAll(".requirements");
-    let lengBoolean, hasCapital, hasNum, hasSpecialChar, hasLowerCase;
-    let confirmValidator = document.querySelector(".confirmReq")
-    let lengValidator = document.querySelector(".leng");
-    let capLetterValidator = document.querySelector(".big-letter");
-    let numValidator = document.querySelector(".num");
-    let specialCharValidator = document.querySelector(".special-char");
-    let lowerCaseLetter = document.querySelector(".lowercase-letter");
+    const confirmValidator = document.querySelector(".confirmReq")
 
-    requirements.forEach((element) => element.classList.add("wrong"));
-    confirmValidator.classList.add("wrong");
+    let pwConfig = {
+        "pwMinLenREGEX":".{8,}",
+        "pwSpecialCharREGEX": "[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?`~]",
+        "pwNumREGEX":"\d",
+        "pwLowerCaseREGEX": "[a-z]",
+        "pwUpperCaseREGEX": "[A-Z]"
+    };
 
+    let lengValidator = {elem: document.querySelector(".leng"), pass:false, regexpr:RegExp(pwConfig.pwMinLenREGEX)};
+    let capLetterValidator = {elem: document.querySelector(".big-letter"), pass:false, regexpr:RegExp(pwConfig.pwUpperCaseREGEX)};
+    let numValidator = {elem: document.querySelector(".num"), pass: false, regexpr: RegExp(pwConfig.pwNumREGEX)};
+    let specialCharValidator = {elem: document.querySelector(".special-char"), pass: false, regexpr: RegExp(pwConfig.pwSpecialCharREGEX)};
+    let lowerCaseLetterValidator = {elem: document.querySelector(".lowercase-letter"), pass:false, regexpr: RegExp(pwConfig.pwLowerCaseREGEX)};
+
+    let policyRequirements = [lengValidator, capLetterValidator, numValidator, specialCharValidator, lowerCaseLetterValidator]
+
+    //initializing all policies to fail
+    requirements.forEach((element) => fieldUpdate(element, errorPolicyCSS, successPolicyCSS));
+    fieldUpdate(confirmValidator, errorPolicyCSS, successPolicyCSS);
+
+    //initializing the alerts 
     passwordField.addEventListener("focus", () => {
-        if (!passwordAlert.classList.contains("is-valid")){
-            passwordAlert.classList.add("alert-warning");
+        if (!passwordAlert.classList.contains(successAlertCSS)){
+            fieldUpdate(passwordAlert, errorAlertCSS)
         }
     });
 
     pwConfirmField.addEventListener("focus", () => {
-        if (!passwordConfirmAlert.classList.contains("is-valid")){
-            passwordConfirmAlert.classList.add("alert-warning");
+        if (!pwConfirmAlert.classList.contains(successAlertCSS)){
+            fieldUpdate(pwConfirmAlert, errorAlertCSS)
         }
     });
 
+    //Update Logic for Password
     passwordField.addEventListener("input", () => {
-        let value = passwordField.value;
-        if (value.length < 8) {
-            lengBoolean = false;
-            lengValidator.classList.add("wrong");
-            lengValidator.classList.remove("good");
+        let pwValue = passwordField.value;
+
+        policyRequirements.forEach(function(validator){
+            verifyElem(validator, pwValue)
+        });
+
+        if (allPass(policyRequirements)) {
+            fieldUpdate(passwordField, successFieldCSS, errorFieldCSS);
+            fieldUpdate(passwordAlert, successAlertCSS, errorAlertCSS);
         } else {
-            lengBoolean = true;
-            lengValidator.classList.add("good");
-            lengValidator.classList.remove("wrong");
-        }
-
-        if (value.toLowerCase() == value) {
-            hasCapital = false;
-            capLetterValidator.classList.add("wrong");
-            capLetterValidator.classList.remove("good");
-        } else {
-            hasCapital = true;
-            capLetterValidator.classList.add("good");
-            capLetterValidator.classList.remove("wrong");
-        }
-
-        if (value.toUpperCase() == value) {
-            hasLowerCase = false;
-            lowerCaseLetter.classList.add("wrong");
-            lowerCaseLetter.classList.remove("good");
-        } else {
-            hasLowerCase = true;
-            lowerCaseLetter.classList.add("good");
-            lowerCaseLetter.classList.remove("wrong");
-        }
-
-        var numRegex = /\d/;
-        hasNum = numRegex.test(value)
-
-        var specRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\`\~]/;
-        hasSpecialChar = specRegex.test(value)
-
-        if (lengBoolean && hasCapital && hasNum && hasSpecialChar && hasLowerCase) {
-            passwordField.classList.remove("is-invalid");
-            passwordField.classList.add("is-valid");
-
-            requirements.forEach((element) => {
-                element.classList.remove("wrong");
-                element.classList.add("good");
-            });
-            passwordAlert.classList.remove("alert-warning");
-            passwordAlert.classList.add("alert-success");
-        } else {
-            passwordField.classList.remove("is-valid");
-            passwordField.classList.add("is-invalid");
-
-            passwordAlert.classList.add("alert-warning");
-            passwordAlert.classList.remove("alert-success");
-
-            if (hasNum == false) {
-                numValidator.classList.add("wrong");
-                numValidator.classList.remove("good");
-            } else {
-                numValidator.classList.add("good");
-                numValidator.classList.remove("wrong");
-            }
-
-            if (hasSpecialChar == false) {
-                specialCharValidator.classList.add("wrong");
-                specialCharValidator.classList.remove("good");
-            } else {
-                specialCharValidator.classList.add("good");
-                specialCharValidator.classList.remove("wrong");
-            }
+            fieldUpdate(passwordField, errorFieldCSS, successFieldCSS);
+            fieldUpdate(passwordAlert, errorAlertCSS, successAlertCSS);
         }
     });
 
+    //Update Logic for Password Confirm
     pwConfirmField.addEventListener("input", () => {
-        let value = pwConfirmField.value;
-        if (value === passwordField.value) {
-            pwConfirmField.classList.remove("is-invalid");
-            pwConfirmField.classList.add("is-valid");
-            passwordConfirmAlert.classList.remove("alert-warning");
-            passwordConfirmAlert.classList.add("alert-success");
-            confirmValidator.classList.remove("wrong");
-            confirmValidator.classList.add("good");
+        let pwConfValue = pwConfirmField.value;
+        if (pwConfValue === passwordField.value) {
+            fieldUpdate(pwConfirmField, successFieldCSS, errorFieldCSS)
+            fieldUpdate(pwConfirmAlert, successAlertCSS, errorAlertCSS)
+            fieldUpdate(confirmValidator, successPolicyCSS, errorPolicyCSS)
         } else  {
-            pwConfirmField.classList.remove("is-valid");
-            pwConfirmField.classList.add("is-invalid");
-            passwordConfirmAlert.classList.remove("alert-success");
-            passwordConfirmAlert.classList.add("alert-warning");
-            confirmValidator.classList.remove("good");
-            confirmValidator.classList.add("wrong");
+            fieldUpdate(pwConfirmField, errorFieldCSS, successFieldCSS,)
+            fieldUpdate(pwConfirmAlert, errorAlertCSS, successAlertCSS)
+            fieldUpdate(confirmValidator, errorPolicyCSS, successPolicyCSS)
         }
     });
 });
+
+
 
 function toggle(id) {
     let pwField = document.getElementById(id);
