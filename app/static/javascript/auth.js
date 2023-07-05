@@ -40,8 +40,6 @@ addEventListener("DOMContentLoaded", (event) => {
     const pwConfirmField = document.getElementById("floatingPWConf")
     const passwordAlert = document.getElementById("password-alert");
     const pwConfirmAlert = document.getElementById("passwordConfirm-alert");
-    const requirements = document.querySelectorAll(".requirements");
-    const confirmValidator = document.querySelector(".confirmReq")
 
     let pwConfig = {
         "pwMinLenREGEX":".{8,}",
@@ -56,11 +54,12 @@ addEventListener("DOMContentLoaded", (event) => {
     let numValidator = {elem: document.querySelector(".num"), pass: false, regexpr: RegExp(pwConfig.pwNumREGEX)};
     let specialCharValidator = {elem: document.querySelector(".special-char"), pass: false, regexpr: RegExp(pwConfig.pwSpecialCharREGEX)};
     let lowerCaseLetterValidator = {elem: document.querySelector(".lowercase-letter"), pass:false, regexpr: RegExp(pwConfig.pwLowerCaseREGEX)};
+    const confirmValidator = document.querySelector(".confirmReq")
 
     let policyRequirements = [lengValidator, capLetterValidator, numValidator, specialCharValidator, lowerCaseLetterValidator]
 
     //initializing all policies to fail
-    requirements.forEach((element) => domElemUpdate(element, errorPolicyCSS, successPolicyCSS));
+    policyRequirements.forEach((element) => domElemUpdate(element, errorPolicyCSS, successPolicyCSS));
     domElemUpdate(confirmValidator, errorPolicyCSS, successPolicyCSS);
 
     //initializing the alerts 
