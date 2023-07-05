@@ -5,21 +5,24 @@ let errorAlertCSS = "alert-warning"
 let successPolicyCSS = "good"
 let errorPolicyCSS = "wrong"
 
-function fieldUpdate(domElement, addCls, removeCls = null){
+//adds/removes classes to dom elements
+function domElemUpdate(domElement, addCls, removeCls = null){
     domElement.classList.remove(removeCls);
     domElement.classList.add(addCls);
 }
 
+//verifies dom elements satisfy policy based on REGEX 
 function verifyElem (domElemObj, value){
     domElemObj.pass = domElemObj.regexpr.test(value)
     if (domElemObj.pass){
-        fieldUpdate(domElemObj.elem, successPolicyCSS, errorPolicyCSS)
+        domElemUpdate(domElemObj.elem, successPolicyCSS, errorPolicyCSS)
     }
     else{
-        fieldUpdate(domElemObj.elem, errorPolicyCSS, successPolicyCSS)
+        domElemUpdate(domElemObj.elem, errorPolicyCSS, successPolicyCSS)
     }
 }
 
+//checks that a list of elements all pass the policy
 function allPass(lstElem){
     let boolAllPass = true
     lstElem.forEach(function(lst){
@@ -57,19 +60,19 @@ addEventListener("DOMContentLoaded", (event) => {
     let policyRequirements = [lengValidator, capLetterValidator, numValidator, specialCharValidator, lowerCaseLetterValidator]
 
     //initializing all policies to fail
-    requirements.forEach((element) => fieldUpdate(element, errorPolicyCSS, successPolicyCSS));
-    fieldUpdate(confirmValidator, errorPolicyCSS, successPolicyCSS);
+    requirements.forEach((element) => domElemUpdate(element, errorPolicyCSS, successPolicyCSS));
+    domElemUpdate(confirmValidator, errorPolicyCSS, successPolicyCSS);
 
     //initializing the alerts 
     passwordField.addEventListener("focus", () => {
         if (!passwordAlert.classList.contains(successAlertCSS)){
-            fieldUpdate(passwordAlert, errorAlertCSS)
+            domElemUpdate(passwordAlert, errorAlertCSS)
         }
     });
 
     pwConfirmField.addEventListener("focus", () => {
         if (!pwConfirmAlert.classList.contains(successAlertCSS)){
-            fieldUpdate(pwConfirmAlert, errorAlertCSS)
+            domElemUpdate(pwConfirmAlert, errorAlertCSS)
         }
     });
 
@@ -82,11 +85,11 @@ addEventListener("DOMContentLoaded", (event) => {
         });
 
         if (allPass(policyRequirements)) {
-            fieldUpdate(passwordField, successFieldCSS, errorFieldCSS);
-            fieldUpdate(passwordAlert, successAlertCSS, errorAlertCSS);
+            domElemUpdate(passwordField, successFieldCSS, errorFieldCSS);
+            domElemUpdate(passwordAlert, successAlertCSS, errorAlertCSS);
         } else {
-            fieldUpdate(passwordField, errorFieldCSS, successFieldCSS);
-            fieldUpdate(passwordAlert, errorAlertCSS, successAlertCSS);
+            domElemUpdate(passwordField, errorFieldCSS, successFieldCSS);
+            domElemUpdate(passwordAlert, errorAlertCSS, successAlertCSS);
         }
     });
 
@@ -94,13 +97,13 @@ addEventListener("DOMContentLoaded", (event) => {
     pwConfirmField.addEventListener("input", () => {
         let pwConfValue = pwConfirmField.value;
         if (pwConfValue === passwordField.value) {
-            fieldUpdate(pwConfirmField, successFieldCSS, errorFieldCSS)
-            fieldUpdate(pwConfirmAlert, successAlertCSS, errorAlertCSS)
-            fieldUpdate(confirmValidator, successPolicyCSS, errorPolicyCSS)
+            domElemUpdate(pwConfirmField, successFieldCSS, errorFieldCSS)
+            domElemUpdate(pwConfirmAlert, successAlertCSS, errorAlertCSS)
+            domElemUpdate(confirmValidator, successPolicyCSS, errorPolicyCSS)
         } else  {
-            fieldUpdate(pwConfirmField, errorFieldCSS, successFieldCSS,)
-            fieldUpdate(pwConfirmAlert, errorAlertCSS, successAlertCSS)
-            fieldUpdate(confirmValidator, errorPolicyCSS, successPolicyCSS)
+            domElemUpdate(pwConfirmField, errorFieldCSS, successFieldCSS,)
+            domElemUpdate(pwConfirmAlert, errorAlertCSS, successAlertCSS)
+            domElemUpdate(confirmValidator, errorPolicyCSS, successPolicyCSS)
         }
     });
 });
