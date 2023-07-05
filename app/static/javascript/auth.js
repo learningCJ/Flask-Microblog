@@ -25,8 +25,8 @@ function verifyElem (domElemObj, value){
 //checks that a list of elements all pass the policy
 function allPass(lstElem){
     let boolAllPass = true
-    lstElem.forEach(function(lst){
-        if (lst.pass === false){
+    lstElem.forEach(function(itm){
+        if (itm.pass === false){
             boolAllPass = false
             return boolAllPass;
         }
