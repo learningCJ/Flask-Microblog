@@ -34,3 +34,10 @@
    *    Localized the site for Korean users - automatically detect based on system + browser using Flask Babel
    *    Translation services if the post language is different than the user’s locale using jQuery and Javascript with a call made to Microsoft Azure Translation Services API
    *    Using blueprints to make the website scalable and portable
+4. ** (2023-07-05) User API: **
+   *    Documentation on the website coming soon
+   *    Getting Token: "http -a "<email>" POST http://chrisjeong.ca/api/tokens" (password will be prompted)
+   *    Getting a list of Users (token required): "http GET https://chrisjeong.ca/api/users" The request must have a header with a valid token. To test it from cmd you can |http GET https://chrisjeong.ca/api/users "Authorization:Bearer <token code>"|
+   *    Getting a User Info (token required): "http GET https://chrisjeong.ca/api/users/<id>" The request must have a header with a valid token. To test it from cmd you can |http GET https://chrisjeong.ca/api/users/<id> "Authorization:Bearer <token code>"|
+   *    Getting a list of followers: "http GET https://chrisjeong.ca/api/users/<id>/followers" The request must have a header with a valid token. To test it from cmd you can |http GET https://chrisjeong.ca/api/users/<id>/followers "Authorization:Bearer <token code>"|
+   *    Getting a list of following: "http GET https://chrisjeong.ca/api/users/<id>/following" The request must have a header with a valid token. To test it from cmd you can |http GET https://chrisjeong.ca/api/users/<id>/followers "Authorization:Bearer <token code>"|
