@@ -44,8 +44,6 @@ class RegistrationForm(FlaskForm):
         special_chars = self.pwConfig["pwSpecialCharREGEX"]
         if password.data.find(self.username.data)>=0:
             raise ValidationError(_('Password is not allowed to contain your username.'))
-        print(re.search(special_chars,password.data))
-        print(special_chars)
         if not re.search(special_chars,password.data):
             raise ValidationError(_('Password needs to have at least one special character from %(special_chars)s', special_chars=special_chars.replace('\\','')[1:-1]))
         if not re.search('[A-Z]',password.data):
@@ -69,9 +67,17 @@ class ResetPasswordForm(FlaskForm):
     show_pw = BooleanField(_l('Show Password'))
     submit = SubmitField(_l('Reset Password'))
 
-    def validate_password(self, password):
-        if password.data.find(self.user.username)>=0:
-            raise ValidationError(_('Password is not allowed to contain your username.'))
-        
+    def validate_password(self, password):     
         if self.user.check_password(password.data):
             raise ValidationError(_('Your new password cannot be the same as the current one.'))
+        special_chars = self.pwConfig["pwSpecialCharREGEX"]
+        if password.data.find(self.username.data)>=0:
+            raise ValidationError(_('Password is not allowed to contain your username.'))
+        if not re.search(special_chars,password.data):
+            raise ValidationError(_('Password needs to have at least one special character from %(special_chars)s', special_chars=special_chars.replace('\\','')[1:-1]))
+        if not re.search('[A-Z]',password.data):
+            raise ValidationError(_('Password must contain at least 1 Upper Case (Capital) letter'))
+        if not re.search('[0-9]', password.data):
+            raise ValidationError(_('Password must contain at least 1 number'))
+        if not re.search('[a-z]', password.data):
+            raise ValidationError(_('Password must contain at least 1 lower case letter'))
