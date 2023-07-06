@@ -9,12 +9,16 @@ def pwPolicy(form, field):
     pwConfig = json.loads(f.read())
 
     special_chars = pwConfig["pwSpecialCharREGEX"]
+    capitalREGEX = pwConfig["pwUpperCaseREGEX"]
+    numREGEX = pwConfig["pwNumREGEX"]
+    lowercaseREGEX = pwConfig["pwLowerCaseREGEX"]
+
     
     if not re.search(special_chars,field.data):
         raise ValidationError(_('Password needs to have at least one special character from %(special_chars)s', special_chars=special_chars.replace('\\','')[1:-1]))
-    if not re.search('[A-Z]',field.data):
+    if not re.search(capitalREGEX,field.data):
         raise ValidationError(_('Password must contain at least 1 Upper Case (Capital) letter'))
-    if not re.search('[0-9]', field.data):
+    if not re.search(numREGEX, field.data):
         raise ValidationError(_('Password must contain at least 1 number'))
-    if not re.search('[a-z]', field.data):
+    if not re.search(lowercaseREGEX, field.data):
         raise ValidationError(_('Password must contain at least 1 lower case letter'))

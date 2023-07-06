@@ -1,4 +1,7 @@
 {
     "pwMinLen": 8,
-    "pwSpecialCharREGEX": "[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?`~]"
+    "pwSpecialCharREGEX": "[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?`~]",
+    "pwNumREGEX":"[0-9]+",
+    "pwLowerCaseREGEX": "[a-z]+",
+    "pwUpperCaseREGEX": "[A-Z]+"
 }
