@@ -1,5 +1,6 @@
 {
     "pwMinLen": 8,
+    "pwMinLenREGEX":".{8,}",
     "pwSpecialCharREGEX": "[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?`~]",
     "pwNumREGEX":"[0-9]+",
     "pwLowerCaseREGEX": "[a-z]+",

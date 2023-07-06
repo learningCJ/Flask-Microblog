@@ -5,6 +5,9 @@ from app import db
 import sqlalchemy as sa
 from app.api.errors import bad_request
 from app.api.auth import token_auth
+from app.auth.validators import pwPolicy
+import json
+from wtforms.validators import  ValidationError
 
 
 @bp.route('/users/<int:id>', methods=['GET'])
@@ -47,8 +50,12 @@ def create_user():
         return bad_request('please use a different username')
     if db.session.scalars(sa.select(User).filter_by(email=data['email'])).first():
         return bad_request('Please use a different email address')
+    try:
+        pwPolicy(data=data["password"])
+    except ValidationError as e:
+        return bad_request(str(e))
     user = User()
-    user.from_dict(data, new_user=True)
+    user.from_dict(data, pw_included=True)
     db.session.add(user)
     db.session.commit()
     response = jsonify(user.to_dict())
@@ -61,6 +68,7 @@ def create_user():
 def update_user(id):
     if token_auth.current_user().id != id:
         abort(403)
+    pw_included=False
     user = db.get_or_404(User,id)
     data = request.get_json() or {}
     if 'username' in data and data['username'] != user.username and \
@@ -71,6 +79,12 @@ def update_user(id):
         return bad_request('Please use a different email address')
     if 'email' in data and data['email'] != user.email and user.isVerified:
         return bad_request('You cannot update the email once confirmed')
-    user.from_dict(data, new_user=False)
+    if 'password' in data:
+        pw_included = True
+        try:
+            pwPolicy(data=data["password"])
+        except ValidationError as e:
+            return bad_request(str(e))
+    user.from_dict(data, pw_included=pw_included)
     db.session.commit()
     return jsonify(user.to_dict())
