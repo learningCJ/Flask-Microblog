@@ -44,6 +44,8 @@ class RegistrationForm(FlaskForm):
         special_chars = self.pwConfig["pwSpecialCharREGEX"]
         if password.data.find(self.username.data)>=0:
             raise ValidationError(_('Password is not allowed to contain your username.'))
+        print(re.search(special_chars,password.data))
+        print(special_chars)
         if not re.search(special_chars,password.data):
             raise ValidationError(_('Password needs to have at least one special character from %(special_chars)s', special_chars=special_chars.replace('\\','')[1:-1]))
         if not re.search('[A-Z]',password.data):
