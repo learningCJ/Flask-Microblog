@@ -66,7 +66,7 @@ class ResetPasswordForm(FlaskForm):
     f = open ('pwConfig.json', "r")
     pwConfig = json.loads(f.read())
 
-    password = PasswordField(_l('Enter New Password'), validators=[DataRequired(), Length(min=8), pwPolicy])
+    password = PasswordField(_l('Enter New Password'), validators=[DataRequired(), Length(min=pwConfig['pwMinLen']), pwPolicy])
     password_confirm = PasswordField(_l('Please Confirm your New Password'), validators=[EqualTo('password'), DataRequired()])
     show_pw = BooleanField(_l('Show Password'))
     submit = SubmitField(_l('Reset Password'))
