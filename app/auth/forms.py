@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, EqualTo, Email, ValidationError, Length
+from app.auth.validators import pwPolicy
 from app import db
 import sqlalchemy as sa
 from app.models import User
@@ -62,22 +63,19 @@ class ResetPasswordForm(FlaskForm):
         self.user = user
         super().__init__(*args, **kwargs)
 
-    password = PasswordField(_l('Enter New Password'), validators=[DataRequired(), Length(min=8)])
+    f = open ('pwConfig.json', "r")
+    pwConfig = json.loads(f.read())
+
+    password = PasswordField(_l('Enter New Password'), validators=[DataRequired(), Length(min=8), pwPolicy])
     password_confirm = PasswordField(_l('Please Confirm your New Password'), validators=[EqualTo('password'), DataRequired()])
     show_pw = BooleanField(_l('Show Password'))
     submit = SubmitField(_l('Reset Password'))
 
-    def validate_password(self, password):     
+    def validate_password(self, password):
+        if password.data.find(self.user.username)>=0:
+            raise ValidationError(_('Password is not allowed to contain your username.'))
+        
         if self.user.check_password(password.data):
             raise ValidationError(_('Your new password cannot be the same as the current one.'))
-        special_chars = self.pwConfig["pwSpecialCharREGEX"]
-        if password.data.find(self.username.data)>=0:
-            raise ValidationError(_('Password is not allowed to contain your username.'))
-        if not re.search(special_chars,password.data):
-            raise ValidationError(_('Password needs to have at least one special character from %(special_chars)s', special_chars=special_chars.replace('\\','')[1:-1]))
-        if not re.search('[A-Z]',password.data):
-            raise ValidationError(_('Password must contain at least 1 Upper Case (Capital) letter'))
-        if not re.search('[0-9]', password.data):
-            raise ValidationError(_('Password must contain at least 1 number'))
-        if not re.search('[a-z]', password.data):
-            raise ValidationError(_('Password must contain at least 1 lower case letter'))
+        
+        
