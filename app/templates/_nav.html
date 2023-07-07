@@ -1,0 +1,51 @@
+<nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand abs" href="{{ url_for('main.index') }}">{{ _('ChrisJeong') }}</a>
+        <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!--left side of the navbar-->
+        <div class="navbar-collapse collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('main.index') }}">{{ _('Home') }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.explore') }}">{{ _('Explore') }}</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarAboutDropDownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{_('About')}}
+                    </a> 
+                    <ul class="dropdown-menu" aria-labelledby="navbarAboutDropDownMenu">
+                        <li><a class="nav-link" href="{{ url_for('main.about') + '#about-Chris' }}">{{ _('About Chris') }}</a></li>
+                        <li><a class="nav-link" href="{{ url_for('main.resume') }}">{{ _('View Resume') }}</a></li>
+                        <li><a class="nav-link" href="{{ url_for('main.about') + '#about-the-site' }}">{{ _('Under the Hood') }}</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <!--right side of the navbar-->
+            <ul class="navbar-nav ms-auto">
+                {% if current_user.is_anonymous %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.user', username= current_user.username) }}">{{ _('Profile') }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a>
+                </li>
+                {% endif %}
+            </ul>
+                {% if g.search_form %}
+                <form class="d-flex" role ="search" method="get" action="{{ url_for('main.search') }}" id="searchBox">
+                    {{ g.search_form.q(type='search', size=20, class='form-control me-2', placeholder=g.search_form.q.label.text) }}
+                </form>
+                {% endif %}
+                <a href="https://github.com/learningCJ" target="_blank"><img src ="{{ url_for('static', filename='github-mark.png') }}" width="35px" height="35px"></a>
+                <a href="https://www.linkedin.com/in/chrisheechuljeong/" target="_blank"><img src ="{{ url_for('static', filename='LinkedInLogo.png') }}" width="35px" height="35px"></a>
+        </div>
+    </div>
+</nav>
