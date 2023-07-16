@@ -96,11 +96,14 @@ class User(PaginatedAPIMixin,UserMixin,db.Model):
     email: so.Mapped[str] = so.mapped_column(sa.String(120), index = True, unique = True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(128))
     posts: so.WriteOnlyMapped['Post'] = so.relationship(back_populates='author', passive_deletes = True)
+    articles: so.WriteOnlyMapped['Article'] = so.relationship(back_populates='author',passive_deletes = True)
+    comments: so.WriteOnlyMapped['Comment'] = so.relationship(back_populates='commenter', passive_deletes = True)
     about_me: so.Mapped[Optional[str]] = so.mapped_column(sa.String(140))
     last_seen: so.Mapped[datetime] = so.mapped_column(default = datetime.utcnow)
     isVerified: so.Mapped[bool] = so.mapped_column(default=0)
     token: so.Mapped[Optional[str]] = so.mapped_column(sa.String(32), index=True, unique=True)
     token_expiration: so.Mapped[Optional[datetime]] = so.mapped_column()
+    admin: so.Mapped[Optional[bool]] = so.mapped_column(default=0)
 
     following: so.WriteOnlyMapped['User'] = so.relationship(
         secondary=followers,
@@ -239,6 +242,117 @@ class Post(SearchableMixin,db.Model):
 
     def __repr__(self):
         return '<Post: {}>'.format(self.body)
+
+post_tags = db.Table(
+    "post_tags",
+    db.metadata, 
+    sa.Column('tag_id', sa.ForeignKey('tag.id'), primary_key=True),
+    sa.Column('article_id', sa.ForeignKey('article.id'), primary_key=True)
+)
+
+class Article(db.Model):
+    __tablename__= "article"
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    title: so.Mapped[str] = so.mapped_column(sa.String(50))
+    body: so.Mapped[str] = so.mapped_column(sa.String(5000))
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
+    author: so.Mapped['User'] = so.relationship(back_populates='articles')
+    comments: so.WriteOnlyMapped['Comment'] = so.relationship(back_populates='article', passive_deletes=True)
+    timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=datetime.utcnow)
+    update_timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=datetime.utcnow)
+    visible: so.Mapped[bool] = so.mapped_column(default=0)#consider changing to isSubmitted
+
+    tags: so.WriteOnlyMapped['Tag'] = so.relationship(
+        secondary=post_tags,
+        back_populates="articles"
+    )
+
+    def is_tagged(self,tag):
+        return db.session.scalars(sa.select(Article).where(
+            Article.id == self.id, Article.tags.contains(tag))).one_or_none() is not None
+        
+    def tag(self,tag):
+        if not self.is_tagged(tag):
+            db.session.execute(sa.insert(post_tags).values(
+                tag_id = tag.id, article_id=self.id))
+
+    def untag(self,tag):
+        if self.is_tagged(tag):
+            db.session.execute(sa.delete(post_tags).where(
+                post_tags.c.tag_id == tag.id,
+                post_tags.c.article_id == self.id))
+            
+    def delete(self):
+        tag_list = self.tags
+        #loop through the tags and delete all tags that have only 1 article (which is the article being deleted)
+        for tag in db.session.scalars(tag_list.select()).all():
+            if tag:
+                self.untag(tag)
+                if tag.count_articles() == 0:#consider moving this to the route function. For now it's good here for testing. 
+                    tag.delete()
+        #delete all comments
+        Comment.delete_article_comments(self) #consider moving this to the route function. For now needs to be here for testing
+        #delete the article
+        db.session.execute(sa.delete(Article).where(Article.id == self.id))    
+
+    def fetch_comments(self):
+        return self.comments.select()
+    
+    def fetch_tags(self):
+        return self.tags.select()
+
+    @staticmethod
+    def fetch():
+        return sa.select(Article)
+        
+    def __repr__(self):
+        return '<Article: {}>'.format(self.title)
+
+class Tag(db.Model):
+    __tablename__="tag"
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    name: so.Mapped['str'] = so.mapped_column(sa.String(10))
+
+    articles: so.WriteOnlyMapped['Article'] = so.relationship(
+        secondary=post_tags,
+        back_populates="tags"
+    )
+    
+    def count_articles(self):
+        return db.session.scalar(sa.select(sa.func.count()).select_from(
+            self.articles.select().subquery()))      
+    
+    def tagged_articles_select(self):
+        return self.articles.select()
+
+    def delete(self):
+        for article in db.session.scalars(self.articles.select()).all():
+            article.untag(self)
+        db.session.execute(sa.delete(Tag).where(Tag.id == self.id))
+
+    def __repr__(self):
+        return '<Tag: {}>'.format(self.name)
+
+class Comment(db.Model):
+    __tablename__="comment"
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    comment: so.Mapped[str] = so.mapped_column(sa.String(500))
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),index=True)
+    commenter: so.Mapped['User'] = so.relationship(back_populates='comments')
+    article_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Article.id), index=True)
+    article: so.Mapped['Article'] = so.relationship(back_populates='comments')
+    timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=datetime.utcnow)
+    approved: so.Mapped[bool] = so.mapped_column(default=False)
+
+    def delete(self):
+        db.session.execute(sa.delete(Comment).where(Comment.id == self.id))
+
+    @staticmethod
+    def delete_article_comments(article):
+        db.session.execute(sa.delete(Comment).where(Comment.article==article))
+
+    def __repr__(self):
+        return '<Comment: {}>'.format(self.comment)
 
 class TechStack(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)

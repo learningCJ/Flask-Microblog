@@ -1,6 +1,6 @@
 import unittest
 from app import create_app, db
-from app.models import User, Post
+from app.models import User, Post, Article, Tag, Comment
 import sqlalchemy as sa
 from datetime import datetime, timedelta
 from config import Config
@@ -9,6 +9,149 @@ from langdetect import detect, LangDetectException
 class TestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    ELASTICSEARCH_URL=''
+
+class Blogging_Feature_Test(unittest.TestCase):
+    #let's figure out what the logical breakup of this is
+    def setUp(self):
+        self.app = create_app(TestConfig)
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+
+    def test_tag(self):
+        #Add users
+        u1 = User(username="Summer", email="summer@c137.com", isVerified=1)
+        u2 = User(username="Morty", email="morty@c137.com", isVerified=1)
+        u3 = User(username="Beth", email="beth@c137.com", isVerified=1)
+        u4 = User(username="Rick", email ="iamgod@c134.com", isVerified=1)
+        db.session.add_all([u1,u2,u3,u4])
+        db.session.commit()
+
+        #Add articles
+        now = datetime.utcnow()
+        a1 = Article(title="article 1", body="Article 1 Body", timestamp=now+timedelta(seconds=2), user_id=1, visible=1)
+        a2 = Article(title="article 2", body="Article 2 Body", timestamp=now+timedelta(seconds=1), user_id=1, visible=1)
+        a3 = Article(title="article 3", body="Article 3 Body", timestamp=now+timedelta(seconds=4), user_id=1, visible=1)
+        a4 = Article(title="article 4", body="Article 3 Body", timestamp=now+timedelta(seconds=3), user_id=1, visible=1)
+        db.session.add_all([a1,a2,a3,a4])
+        db.session.commit()
+
+        #test articles being fetched and the order of it
+        blog = db.session.scalars(Article.fetch().order_by(Article.timestamp.desc())).all()
+        assert blog == [a3, a4, a1, a2]
+
+        #add tags
+        t1 = Tag(name="tag1")
+        t2 = Tag(name="tag2")
+        t3 = Tag(name="tag3")
+        t4 = Tag(name="tag4")
+        db.session.add_all([t1,t2,t3,t4])
+        
+        #associate tags to articles
+        a1.tag(t1)
+        a2.tag(t1)
+        a3.tag(t1)
+
+        a1.tag(t2)
+        a2.tag(t2)
+
+        a2.tag(t3)
+        a3.tag(t3)
+        
+        a4.tag(t4)
+        db.session.commit()
+
+        #test articles given tag
+        blog_Tag1 = db.session.scalars(t1.articles.select().order_by(Article.timestamp.desc())).all()
+        blog_Tag2 = db.session.scalars(t2.articles.select().order_by(Article.timestamp.desc())).all()
+        blog_Tag3 = db.session.scalars(t3.articles.select().order_by(Article.timestamp.desc())).all()
+        blog_Tag4 = db.session.scalars(t4.articles.select().order_by(Article.timestamp.desc())).all()
+
+        assert blog_Tag1 == [a3, a1, a2]
+        assert blog_Tag2 == [a1, a2]
+        assert blog_Tag3 == [a3, a2]
+        assert blog_Tag4 == [a4]
+
+        #Retrieve tags given an article
+        count_articles_t1 = db.session.scalar(sa.select(sa.func.count()).select_from(
+            t1.articles.select().subquery()))
+        count_articles_t2 = db.session.scalar(sa.select(sa.func.count()).select_from(
+            t2.articles.select().subquery()))
+        count_articles_t3 = db.session.scalar(sa.select(sa.func.count()).select_from(
+            t3.articles.select().subquery()))
+        count_articles_t4 = db.session.scalar(sa.select(sa.func.count()).select_from(
+            t4.articles.select().subquery()))
+        
+        assert count_articles_t1 == 3
+        assert count_articles_t2 == 2
+        assert count_articles_t3 == 2
+        assert count_articles_t4 == 1
+
+        #delete tags from articles
+        a2.untag(t1)
+        db.session.commit()
+        assert t1.count_articles() == 2
+        blog_Tag1 = db.session.scalars(t1.articles.select().order_by(Article.timestamp.desc())).all()
+        assert blog_Tag1 == [a3, a1]
+
+
+        #delete tags altogether (when a tag is deleted, the relationship has to be gone too)
+        
+        #test comment submission
+        a1c1 = Comment(comment="article1 comment1", user_id=2, article_id=1, approved=True)
+        a1c2 = Comment(comment="article1 comment2", user_id=1, article_id=1, approved=True)
+        a1c3 = Comment(comment="article1 comment2", user_id=2, article_id=1, approved=True)
+        a2c1 = Comment(comment="article2 comment1", user_id=2, article_id=2, approved=True)
+        a3c1 = Comment(comment="article3 comment1", user_id=3, article_id=3, approved=True)
+        a4c1 = Comment(comment="article4 comment1", user_id=4, article_id=4, approved=True)
+        a4c2 = Comment(comment="article4 comment2", user_id=1, article_id=4, approved=True)
+        db.session.add_all([a1c1, a1c2, a1c3, a2c1, a3c1, a4c1, a4c2])
+        db.session.commit()
+            #check that the oldest comment is displayed first
+
+        count_a1_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
+            a1.comments.select().subquery()))
+        count_a2_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
+            a2.comments.select().subquery()))
+        count_a3_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
+            a3.comments.select().subquery()))
+        count_a4_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
+            a4.comments.select().subquery()))    
+        
+        assert count_a1_comments == 3
+        assert count_a2_comments == 1
+        assert count_a3_comments == 1
+        assert count_a4_comments == 2
+
+        #test comment deletion
+        a1c3.delete()
+        count_a1_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
+            a1.comments.select().subquery()))
+        assert count_a1_comments == 2
+
+        #test article deletion
+        a4_id = a4.id
+        a4.delete()
+        db.session.commit()
+        countT4 = db.session.scalar(sa.select(sa.func.count()).select_from(
+            sa.select(Tag).filter_by(id=4).subquery()))
+        
+        assert countT4 == 0
+        
+        #checking to make sure that the comments got deleted too
+        count_a4_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
+            sa.select(Comment).filter_by(article_id = a4_id).subquery()))
+
+        assert count_a4_comments == 0
+
+        
+
 
 class UserModelCase(unittest.TestCase):
 
@@ -67,10 +210,10 @@ class UserModelCase(unittest.TestCase):
             assert db.session.scalars(u2.followers.select()).all() == []
 
     def test_following(self):
-        u1 = User(username="Summer", email="summer@c137.com")
-        u2 = User(username="Morty", email="morty@c137.com")
-        u3 = User(username="Beth", email="beth@c137.com")
-        u4 = User(username="Rick", email ="iamgod@c134.com")
+        u1 = User(username="Summer", email="summer@c137.com", isVerified=1)
+        u2 = User(username="Morty", email="morty@c137.com", isVerified=1)
+        u3 = User(username="Beth", email="beth@c137.com", isVerified=1)
+        u4 = User(username="Rick", email ="iamgod@c134.com", isVerified=1)
         db.session.add_all([u1,u2,u3,u4])
 
         now = datetime.utcnow()
