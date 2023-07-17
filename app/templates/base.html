@@ -37,6 +37,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='CJ_logo.ico') }}" />
         {{ moment.include_moment() }}
         {{ moment.lang(g.locale) }}
+        {{ ckeditor.load() }}
     </head>
     <body>
         <!--navbar-->

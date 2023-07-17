@@ -104,6 +104,7 @@ class User(PaginatedAPIMixin,UserMixin,db.Model):
     token: so.Mapped[Optional[str]] = so.mapped_column(sa.String(32), index=True, unique=True)
     token_expiration: so.Mapped[Optional[datetime]] = so.mapped_column()
     admin: so.Mapped[Optional[bool]] = so.mapped_column(default=0)
+    isTempAccount: so.Mapped[Optional[bool]] = so.mapped_column()
 
     following: so.WriteOnlyMapped['User'] = so.relationship(
         secondary=followers,
@@ -260,7 +261,7 @@ class Article(db.Model):
     comments: so.WriteOnlyMapped['Comment'] = so.relationship(back_populates='article', passive_deletes=True)
     timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=datetime.utcnow)
     update_timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=datetime.utcnow)
-    visible: so.Mapped[bool] = so.mapped_column(default=0)#consider changing to isSubmitted
+    isSubmitted: so.Mapped[bool] = so.mapped_column(default=0)
 
     tags: so.WriteOnlyMapped['Tag'] = so.relationship(
         secondary=post_tags,
@@ -281,29 +282,33 @@ class Article(db.Model):
             db.session.execute(sa.delete(post_tags).where(
                 post_tags.c.tag_id == tag.id,
                 post_tags.c.article_id == self.id))
-            
+
+    def fetch_approved_comments(self):
+        return sa.select(Comment).filter(Comment.article_id == self.id, Comment.isApproved==True)
+
     def delete(self):
         tag_list = self.tags
         #loop through the tags and delete all tags that have only 1 article (which is the article being deleted)
         for tag in db.session.scalars(tag_list.select()).all():
             if tag:
                 self.untag(tag)
-                if tag.count_articles() == 0:#consider moving this to the route function. For now it's good here for testing. 
+                if tag.count_articles() == 0:
                     tag.delete()
         #delete all comments
-        Comment.delete_article_comments(self) #consider moving this to the route function. For now needs to be here for testing
+        Comment.delete_article_comments(self) 
         #delete the article
         db.session.execute(sa.delete(Article).where(Article.id == self.id))    
-
-    def fetch_comments(self):
-        return self.comments.select()
     
     def fetch_tags(self):
         return self.tags.select()
 
     @staticmethod
     def fetch():
-        return sa.select(Article)
+        return sa.select(Article).filter_by(isSubmitted = True)
+    
+    @staticmethod
+    def fetch_draft():
+        return sa.select(Article).filter_by(isSubmitted = False)
         
     def __repr__(self):
         return '<Article: {}>'.format(self.title)
@@ -342,10 +347,17 @@ class Comment(db.Model):
     article_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Article.id), index=True)
     article: so.Mapped['Article'] = so.relationship(back_populates='comments')
     timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=datetime.utcnow)
-    approved: so.Mapped[bool] = so.mapped_column(default=False)
+    isApproved: so.Mapped[bool] = so.mapped_column(default=False)
 
     def delete(self):
         db.session.execute(sa.delete(Comment).where(Comment.id == self.id))
+
+    def approve(self):
+        self.isApproved = True
+
+    @staticmethod
+    def fetch_pending_approval_comments():
+        return sa.select(Comment).filter_by(isApproved=False)
 
     @staticmethod
     def delete_article_comments(article):

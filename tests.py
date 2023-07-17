@@ -35,16 +35,23 @@ class Blogging_Feature_Test(unittest.TestCase):
 
         #Add articles
         now = datetime.utcnow()
-        a1 = Article(title="article 1", body="Article 1 Body", timestamp=now+timedelta(seconds=2), user_id=1, visible=1)
-        a2 = Article(title="article 2", body="Article 2 Body", timestamp=now+timedelta(seconds=1), user_id=1, visible=1)
-        a3 = Article(title="article 3", body="Article 3 Body", timestamp=now+timedelta(seconds=4), user_id=1, visible=1)
-        a4 = Article(title="article 4", body="Article 3 Body", timestamp=now+timedelta(seconds=3), user_id=1, visible=1)
-        db.session.add_all([a1,a2,a3,a4])
+        a1 = Article(title="article 1", body="Article 1 Body", timestamp=now+timedelta(seconds=2), user_id=1, isSubmitted=True)
+        a2 = Article(title="article 2", body="Article 2 Body", timestamp=now+timedelta(seconds=1), user_id=1, isSubmitted=True)
+        a3 = Article(title="article 3", body="Article 3 Body", timestamp=now+timedelta(seconds=4), user_id=1, isSubmitted=True)
+        a4 = Article(title="article 4", body="Article 3 Body", timestamp=now+timedelta(seconds=3), user_id=1, isSubmitted=True)
+        a_draft1 = Article(title="Unsubmitted Post 1", body="Unsubmitted Body 1", timestamp=now+timedelta(seconds=2), user_id=1, isSubmitted = False)
+        a_draft2 = Article(title="Unsubmitted Post 2", body="Unsubmitted Body 2", timestamp=now+timedelta(seconds=1), user_id=1, isSubmitted = False)
+        
+        db.session.add_all([a1,a2,a3,a4,a_draft1,a_draft2])
         db.session.commit()
 
-        #test articles being fetched and the order of it
+        #test articles being fetched and the order of it. Also making sure draft articles don't show up
         blog = db.session.scalars(Article.fetch().order_by(Article.timestamp.desc())).all()
         assert blog == [a3, a4, a1, a2]
+
+        #fetching draft articles
+        draft_articles = db.session.scalars(Article.fetch_draft().order_by(Article.timestamp.desc())).all()
+        assert draft_articles == [a_draft1, a_draft2]
 
         #add tags
         t1 = Tag(name="tag1")
@@ -100,58 +107,116 @@ class Blogging_Feature_Test(unittest.TestCase):
         blog_Tag1 = db.session.scalars(t1.articles.select().order_by(Article.timestamp.desc())).all()
         assert blog_Tag1 == [a3, a1]
 
-
         #delete tags altogether (when a tag is deleted, the relationship has to be gone too)
+        t2.delete()
+        db.session.commit()
+        a1_count_tags = db.session.scalar(sa.select(sa.func.count()).select_from(a1.tags.select().subquery()))
+        a2_count_tags = db.session.scalar(sa.select(sa.func.count()).select_from(a2.tags.select().subquery()))
+
+        #test article deletion removes tags with no more articles
+        a4_id = a4.id
+        a4.delete()
+        db.session.commit()
+        countT4 = db.session.scalar(sa.select(sa.func.count()).select_from(
+            sa.select(Tag).filter_by(id=a4_id).subquery()))
         
+        assert countT4 == 0
+
+        assert a1_count_tags == 1
+        assert a2_count_tags == 1
+    
+    def test_comments(self):
+        #Add users
+        u1 = User(username="Summer", email="summer@c137.com", isVerified=1)
+        u2 = User(username="Morty", email="morty@c137.com", isVerified=1)
+        u3 = User(username="Beth", email="beth@c137.com", isVerified=1)
+        u4 = User(username="Rick", email ="iamgod@c134.com", isVerified=1)
+        db.session.add_all([u1,u2,u3,u4])
+        db.session.commit()
+
+        #Add articles
+        now = datetime.utcnow()
+        a1 = Article(title="article 1", body="Article 1 Body", timestamp=now+timedelta(seconds=2), user_id=1, isSubmitted=True)
+        a2 = Article(title="article 2", body="Article 2 Body", timestamp=now+timedelta(seconds=1), user_id=1, isSubmitted=True)
+        a3 = Article(title="article 3", body="Article 3 Body", timestamp=now+timedelta(seconds=4), user_id=1, isSubmitted=True)
+        a4 = Article(title="article 4", body="Article 4 Body", timestamp=now+timedelta(seconds=3), user_id=1, isSubmitted=True)
+        db.session.add_all([a1,a2,a3,a4])
+        db.session.commit()
+
         #test comment submission
-        a1c1 = Comment(comment="article1 comment1", user_id=2, article_id=1, approved=True)
-        a1c2 = Comment(comment="article1 comment2", user_id=1, article_id=1, approved=True)
-        a1c3 = Comment(comment="article1 comment2", user_id=2, article_id=1, approved=True)
-        a2c1 = Comment(comment="article2 comment1", user_id=2, article_id=2, approved=True)
-        a3c1 = Comment(comment="article3 comment1", user_id=3, article_id=3, approved=True)
-        a4c1 = Comment(comment="article4 comment1", user_id=4, article_id=4, approved=True)
-        a4c2 = Comment(comment="article4 comment2", user_id=1, article_id=4, approved=True)
+        #article 1 comments
+        a1c1 = Comment(comment="article1 comment1", user_id=2, article_id=1, timestamp = now+timedelta(seconds=3), isApproved=True)
+        a1c2 = Comment(comment="article1 comment2", user_id=1, article_id=1, timestamp = now+timedelta(seconds=2), isApproved=True)
+        a1c3 = Comment(comment="article1 comment3", user_id=2, article_id=1, timestamp = now+timedelta(seconds=1), isApproved=True)
+
+
+        #article 2 comments
+        a2c1 = Comment(comment="article2 comment1", user_id=2, article_id=2, timestamp = now+timedelta(seconds=1),isApproved=True)
+        #to test pending comments don't show up
+        a2c2 = Comment(comment="article2 comment2", user_id=2, article_id=2, timestamp = now+timedelta(seconds=2),isApproved=False)
+
+        #article 3 comments
+        a3c1 = Comment(comment="article3 comment1", user_id=3, article_id=3, isApproved=True)
+
+        #article 4 comments
+        a4c1 = Comment(comment="article4 comment1", user_id=4, article_id=4, isApproved=True)
+        a4c2 = Comment(comment="article4 comment2", user_id=1, article_id=4, isApproved=True)
+
         db.session.add_all([a1c1, a1c2, a1c3, a2c1, a3c1, a4c1, a4c2])
         db.session.commit()
-            #check that the oldest comment is displayed first
 
+        #testing comment submissions    
         count_a1_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
-            a1.comments.select().subquery()))
+          a1.fetch_approved_comments().subquery()))
         count_a2_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
-            a2.comments.select().subquery()))
+          a2.fetch_approved_comments().subquery()))
         count_a3_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
-            a3.comments.select().subquery()))
+          a3.fetch_approved_comments().subquery()))
         count_a4_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
-            a4.comments.select().subquery()))    
+          a4.fetch_approved_comments().subquery())) 
         
         assert count_a1_comments == 3
         assert count_a2_comments == 1
         assert count_a3_comments == 1
         assert count_a4_comments == 2
 
+        #check that the oldest comment is displayed first
+        a1_comments = db.session.scalars(a1.fetch_approved_comments().order_by(Comment.timestamp.asc())).all()
+        assert a1_comments == [a1c3,a1c2,a1c1]
+        
+        #to test pending comments don't show up
+        now = datetime.utcnow()
+        a1c4 = Comment(comment="article1 comment4", user_id=2, article_id=1, timestamp = now+timedelta(seconds=1), isApproved=False)
+        a2c2 = Comment(comment="article2 comment2", user_id=2, article_id=1, timestamp = now+timedelta(seconds=2), isApproved=False)
+        db.session.add_all([a1c4, a2c2])
+        db.session.commit()
+
+        count_a1_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
+          a1.fetch_approved_comments().subquery()))
+        count_a2_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
+          a2.fetch_approved_comments().subquery()))
+        assert count_a1_comments == 3
+        assert count_a2_comments == 1
+
         #test comment deletion
         a1c3.delete()
         count_a1_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
-            a1.comments.select().subquery()))
+          a1.fetch_approved_comments().subquery()))
         assert count_a1_comments == 2
-
-        #test article deletion
+        
+        #article deletion results in comment deletion
         a4_id = a4.id
         a4.delete()
         db.session.commit()
-        countT4 = db.session.scalar(sa.select(sa.func.count()).select_from(
-            sa.select(Tag).filter_by(id=4).subquery()))
-        
-        assert countT4 == 0
-        
-        #checking to make sure that the comments got deleted too
         count_a4_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
             sa.select(Comment).filter_by(article_id = a4_id).subquery()))
 
         assert count_a4_comments == 0
 
+        #fetch pending comments
+        pending_comments = db.session.scalars(Comment.fetch_pending_approval_comments().order_by(Comment.timestamp.asc())).all()
+        assert pending_comments == [a1c4, a2c2]
         
-
 
 class UserModelCase(unittest.TestCase):
 
