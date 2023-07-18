@@ -1,0 +1,72 @@
+<div class="comment">
+    <div class="d-flex mb-2">
+        <div class="flex-shrink-1 me-2">
+            <img src = "{{ comment.commenter.avatar(36) }}">
+        </div>
+        <div class="flex-grow-1">
+            
+            {% set user_link %}
+            {% if not comment.commenter.isTempAccount %}
+            <a href = "{{ url_for('main.user', username=comment.commenter.username) }}">
+                {{ comment.commenter.username }}
+            </a> 
+            {% else %}
+            {{ comment.commenter.username }}
+            {% endif %}
+            {% endset %}
+            {{ _('%(username)s said %(when)s:', 
+                username=user_link, when = moment(comment.timestamp).fromNow()) }}  
+            
+            <span id="comment{{ comment.id }}" class="text-break post-span">
+                {{ comment.comment|textile|safe }}
+            </span>
+            
+        </div>
+        <!--3 dot contextual menu-->
+        {% if current_user.is_authenticated %}
+        <div class="flex-shrink-1">
+            <div class ="dropdown">
+                <a class="dropdown-toggle" id="postDropDownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postDropDownMenuLink">
+                    {% if current_user == comment.commenter %}
+                    <li><a class="dropdown-item" href="#deleteModal{{ comment.id }}" data-bs-toggle="modal">{{ _('Delete') }}</a></li>
+                    {% elif current_user.is_authenticated and current_user.is_following(comment.commenter) %}
+                    <form action="{{ url_for('main.unfollow', username=comment.commenter.username) }}" method="post">
+                        {{ form.hidden_tag() }}
+                        {{ form.submit(value=_("Unfollow " + comment.commenter.username), class="dropdown-item") }}
+                    </form>
+                    {% elif current_user.is_authenticated and not current_user.is_following(comment.commenter) %}
+                    <form action="{{ url_for('main.follow', username=comment.commenter.username) }}" method="post">
+                        {{ form.hidden_tag() }}
+                        {{ form.submit(value=_("Follow " + comment.commenter.username), class="dropdown-item") }}
+                    </form>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!--Delete Modal-->
+<div class="modal fade" id="deleteModal{{ comment.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">{{ _('Confirm Delete') }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+            </div>
+            <div class="modal-body">
+                {{ _('Are you sure you want to delete this comment?') }} <br><br>
+                <div class="vr"></div>
+                {{ comment.comment }} 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Close') }}</button>
+                <form action="{{ url_for('blog.delete', id = comment.id) }}" method="post">
+                    {{ form.hidden_tag() }}
+                    {{ form.submit(value=_('Delete'), class="delete btn btn-outline-danger") }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

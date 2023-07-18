@@ -169,6 +169,12 @@ class User(PaginatedAPIMixin,UserMixin,db.Model):
         return jwt.encode({'user_id': self.id, 'exp':time() + expires_in},
                           current_app.config['SECRET_KEY'], algorithm='HS256')
     
+    def isAdmin(self):
+        return self.admin 
+
+    def fetch_approved_comments(self):
+        return sa.select(Comment).filter(Comment.user_id == self.id, Comment.isApproved==True)
+
     @staticmethod
     def verify_token(token):
         try:
@@ -261,7 +267,7 @@ class Article(db.Model):
     comments: so.WriteOnlyMapped['Comment'] = so.relationship(back_populates='article', passive_deletes=True)
     timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=datetime.utcnow)
     update_timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=datetime.utcnow)
-    isSubmitted: so.Mapped[bool] = so.mapped_column(default=0)
+    isSubmitted: so.Mapped[bool] = so.mapped_column(default=False)
 
     tags: so.WriteOnlyMapped['Tag'] = so.relationship(
         secondary=post_tags,
@@ -284,7 +290,7 @@ class Article(db.Model):
                 post_tags.c.article_id == self.id))
 
     def fetch_approved_comments(self):
-        return sa.select(Comment).filter(Comment.article_id == self.id, Comment.isApproved==True)
+        return sa.select(Comment).where(Comment.article_id == self.id, Comment.isApproved==True)
 
     def delete(self):
         tag_list = self.tags
@@ -303,12 +309,16 @@ class Article(db.Model):
         return self.tags.select()
 
     @staticmethod
-    def fetch():
+    def fetch_submitted():
         return sa.select(Article).filter_by(isSubmitted = True)
     
     @staticmethod
     def fetch_draft():
         return sa.select(Article).filter_by(isSubmitted = False)
+    
+    @staticmethod
+    def fetch_article(id):
+        return sa.select(Article).filter_by(id=id)
         
     def __repr__(self):
         return '<Article: {}>'.format(self.title)

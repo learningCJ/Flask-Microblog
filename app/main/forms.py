@@ -69,8 +69,3 @@ class AboutSiteForm(FlaskForm):
     techName = StringField(_('Tech Name'), validators=[DataRequired(), Length(min=1, max=100)])
     category = SelectField(_('Category'), choices=[('Software'), ('Infrastructure')])
     submit = SubmitField(_l('Submit'))
-
-class BlogPost(FlaskForm):
-    title = StringField(_('Title'), validators=[DataRequired(), Length(min=1, max=100)])
-    #post = PageDownField(_('Post goes here'), validators=[DataRequired(), Length(min=1, max=5000)])
-    submit = SubmitField(_l('Submit'))

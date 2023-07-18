@@ -29,7 +29,7 @@ class Blogging_Feature_Test(unittest.TestCase):
         u1 = User(username="Summer", email="summer@c137.com", isVerified=1)
         u2 = User(username="Morty", email="morty@c137.com", isVerified=1)
         u3 = User(username="Beth", email="beth@c137.com", isVerified=1)
-        u4 = User(username="Rick", email ="iamgod@c134.com", isVerified=1)
+        u4 = User(username="Rick", email ="rick@c134.com", isVerified=1)
         db.session.add_all([u1,u2,u3,u4])
         db.session.commit()
 
@@ -46,7 +46,7 @@ class Blogging_Feature_Test(unittest.TestCase):
         db.session.commit()
 
         #test articles being fetched and the order of it. Also making sure draft articles don't show up
-        blog = db.session.scalars(Article.fetch().order_by(Article.timestamp.desc())).all()
+        blog = db.session.scalars(Article.fetch_submitted().order_by(Article.timestamp.desc())).all()
         assert blog == [a3, a4, a1, a2]
 
         #fetching draft articles
@@ -130,7 +130,7 @@ class Blogging_Feature_Test(unittest.TestCase):
         u1 = User(username="Summer", email="summer@c137.com", isVerified=1)
         u2 = User(username="Morty", email="morty@c137.com", isVerified=1)
         u3 = User(username="Beth", email="beth@c137.com", isVerified=1)
-        u4 = User(username="Rick", email ="iamgod@c134.com", isVerified=1)
+        u4 = User(username="Rick", email ="rick@c134.com", isVerified=1)
         db.session.add_all([u1,u2,u3,u4])
         db.session.commit()
 
@@ -148,7 +148,6 @@ class Blogging_Feature_Test(unittest.TestCase):
         a1c1 = Comment(comment="article1 comment1", user_id=2, article_id=1, timestamp = now+timedelta(seconds=3), isApproved=True)
         a1c2 = Comment(comment="article1 comment2", user_id=1, article_id=1, timestamp = now+timedelta(seconds=2), isApproved=True)
         a1c3 = Comment(comment="article1 comment3", user_id=2, article_id=1, timestamp = now+timedelta(seconds=1), isApproved=True)
-
 
         #article 2 comments
         a2c1 = Comment(comment="article2 comment1", user_id=2, article_id=2, timestamp = now+timedelta(seconds=1),isApproved=True)
@@ -183,11 +182,17 @@ class Blogging_Feature_Test(unittest.TestCase):
         #check that the oldest comment is displayed first
         a1_comments = db.session.scalars(a1.fetch_approved_comments().order_by(Comment.timestamp.asc())).all()
         assert a1_comments == [a1c3,a1c2,a1c1]
+
+        #checking user comments
+        u1_comments_count = db.session.scalar(sa.select(sa.func.count()).select_from(
+            u1.fetch_approved_comments().subquery()))
+        
+        assert u1_comments_count == 2
         
         #to test pending comments don't show up
         now = datetime.utcnow()
         a1c4 = Comment(comment="article1 comment4", user_id=2, article_id=1, timestamp = now+timedelta(seconds=1), isApproved=False)
-        a2c2 = Comment(comment="article2 comment2", user_id=2, article_id=1, timestamp = now+timedelta(seconds=2), isApproved=False)
+        a2c2 = Comment(comment="article2 comment2", user_id=2, article_id=2, timestamp = now+timedelta(seconds=2), isApproved=False)
         db.session.add_all([a1c4, a2c2])
         db.session.commit()
 

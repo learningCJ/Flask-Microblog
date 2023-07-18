@@ -23,10 +23,15 @@ class Config(object):
 
     LANGUAGES=["en", "ko"]
 
-    MS_TRANSLATOR_KEY=os.environ.get('MS_TRANSLATOR_KEY')
+    MS_TRANSLATOR_KEY = os.environ.get('MS_TRANSLATOR_KEY')
     ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
     ELASTICSEARCH_USERNAME = os.environ.get('ELASTICSEARCH_USERNAME')
     ELASTICSEARCH_PW = os.environ.get('ELASTICSEARCH_PW')
     ELASTICSEARCH_CERT_DIR = os.environ.get('ELASTICSEARCH_CERT_DIR')
     ADMIN = os.environ.get('ADMIN')
     MIN_PW_LEN = 8
+
+    #CKEDITOR
+    CKEDITOR_SERVE_LOCAL = True
+    CKEDITOR_HEIGHT = 400
+    #CKEDITOR_FILE_UPLOADER = 'upload'

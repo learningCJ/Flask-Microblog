@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    {% for article in articles %}
+        <div class="articleTitle"><h1>{{ article.title }}</h1></div>
+        <div class="articleTag">
+            {% for tag in tags[article] %}
+                <span class="badge rounded-pill text-bg-primary">{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+        <div class="articleBody">{{ article.body|safe| truncate(500, False, '...' , 300) }}</div>
+        <div class="articleAdditionalOptions">
+            <a href="{{ url_for('blog.article', id=article.id) }}" class="btn btn-outline-primary">Continue Reading</a>
+        </div>
+        <br>
+    {% endfor %}
+</div>
+{% include "_pagination.html" %}
+{% endblock %}
+

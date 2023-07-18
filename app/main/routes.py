@@ -1,7 +1,7 @@
 from app import db
 from flask import render_template, flash,redirect, url_for, request, g, jsonify, current_app
 from flask_login import login_required, current_user
-from app.main.forms import EditProfileForm, EmptyForm, BlogPost
+from app.main.forms import EditProfileForm, EmptyForm
 import sqlalchemy as sa
 from app.models import User, Post, TechStack
 from datetime import datetime
@@ -201,21 +201,5 @@ def about():
 def resume():
     return render_template('ChrisJeong.html', title=_('Resume'))
 
-@bp.route('/blog', methods=['GET','POST'])
-def display_blog():
-    #Route for showing all blog posts
-    #admin = current_user.is_authenticated and current_user.email == current_app.config['ADMIN']
-    #return render_template('blog.html', title=('Blog'), form=form, admin=admin)
-    return
-@bp.route('/blog/<blog_id>', methods=['GET'])
-def blog(blog_id):
-    return
 
-@bp.route('/blog/new', methods=['POST'])
-def new_post():
-    return
-
-@bp.route('/blog/edit/<blog_id>', methods=['GET', 'POST'])
-def edit_post(blog_id):
-    return
 
