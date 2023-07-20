@@ -104,7 +104,6 @@ class User(PaginatedAPIMixin,UserMixin,db.Model):
     token: so.Mapped[Optional[str]] = so.mapped_column(sa.String(32), index=True, unique=True)
     token_expiration: so.Mapped[Optional[datetime]] = so.mapped_column()
     admin: so.Mapped[Optional[bool]] = so.mapped_column(default=0)
-    isTempAccount: so.Mapped[Optional[bool]] = so.mapped_column()
 
     following: so.WriteOnlyMapped['User'] = so.relationship(
         secondary=followers,
@@ -261,7 +260,7 @@ class Article(db.Model):
     __tablename__= "article"
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     title: so.Mapped[str] = so.mapped_column(sa.String(50))
-    body: so.Mapped[str] = so.mapped_column(sa.String(5000))
+    body: so.Mapped[str] = so.mapped_column(sa.String(70000))
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
     author: so.Mapped['User'] = so.relationship(back_populates='articles')
     comments: so.WriteOnlyMapped['Comment'] = so.relationship(back_populates='article', passive_deletes=True)
@@ -288,18 +287,22 @@ class Article(db.Model):
             db.session.execute(sa.delete(post_tags).where(
                 post_tags.c.tag_id == tag.id,
                 post_tags.c.article_id == self.id))
+            if tag.count_articles() == 0:
+                tag.delete()
 
     def fetch_approved_comments(self):
         return sa.select(Comment).where(Comment.article_id == self.id, Comment.isApproved==True)
 
+    def count_approved_comments(self):
+        return db.session.scalar(sa.select(sa.func.count()).select_from(
+            sa.select(Comment).where(Comment.article_id == self.id, Comment.isApproved==True).subquery()))
+    
     def delete(self):
         tag_list = self.tags
         #loop through the tags and delete all tags that have only 1 article (which is the article being deleted)
         for tag in db.session.scalars(tag_list.select()).all():
             if tag:
                 self.untag(tag)
-                if tag.count_articles() == 0:
-                    tag.delete()
         #delete all comments
         Comment.delete_article_comments(self) 
         #delete the article
@@ -337,8 +340,8 @@ class Tag(db.Model):
         return db.session.scalar(sa.select(sa.func.count()).select_from(
             self.articles.select().subquery()))      
     
-    def tagged_articles_select(self):
-        return self.articles.select()
+    def tagged_submiited_articles_select(self):
+        return sa.select(Article).filter(Article.tags.contains(self), Article.isSubmitted==True)
 
     def delete(self):
         for article in db.session.scalars(self.articles.select()).all():
@@ -352,8 +355,10 @@ class Comment(db.Model):
     __tablename__="comment"
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     comment: so.Mapped[str] = so.mapped_column(sa.String(500))
-    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),index=True)
+    user_id: so.Mapped[Optional[int]] = so.mapped_column(sa.ForeignKey(User.id),index=True)
     commenter: so.Mapped['User'] = so.relationship(back_populates='comments')
+    name: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64))
+    email: so.Mapped[Optional[str]] = so.mapped_column(sa.String(120), index=True)
     article_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Article.id), index=True)
     article: so.Mapped['Article'] = so.relationship(back_populates='comments')
     timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=datetime.utcnow)
@@ -364,6 +369,9 @@ class Comment(db.Model):
 
     def approve(self):
         self.isApproved = True
+
+    def deny(self):
+        self.delete()
 
     @staticmethod
     def fetch_pending_approval_comments():

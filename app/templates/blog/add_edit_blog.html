@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>
+
+<div class="warpper" style="width: 700px; margin: auto">
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <!--title-->
@@ -15,7 +16,7 @@
         <!--body-->
         <div class="form mb-3">
         {{ form.body.label("Blog Post Body") }}
-        {{ form.body(class="form-control", id="blogPostEditor") }}
+        {{ form.body() }}
         </div>
         {% for error in form.body.errors %}
         <span style="color:red;">{{ error }}</span><br>
@@ -25,7 +26,7 @@
         {{ form.tags.label() }}
         {{ form.tags(class="form-control", id="blogPostTags") }}
         </div>
-        {% for error in form.body.errors %}
+        {% for error in form.tags.errors %}
         <span style="color:red;">{{ error }}</span><br>
         {% endfor %}
         <!--Save Button to be added in the next release-->
@@ -36,5 +37,7 @@
     </form>
     {{ ckeditor.load() }}
     {{ ckeditor.config(name="body") }}
-</p>
+</div>
+
+
 {% endblock %}

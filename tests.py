@@ -75,10 +75,10 @@ class Blogging_Feature_Test(unittest.TestCase):
         db.session.commit()
 
         #test articles given tag
-        blog_Tag1 = db.session.scalars(t1.articles.select().order_by(Article.timestamp.desc())).all()
-        blog_Tag2 = db.session.scalars(t2.articles.select().order_by(Article.timestamp.desc())).all()
-        blog_Tag3 = db.session.scalars(t3.articles.select().order_by(Article.timestamp.desc())).all()
-        blog_Tag4 = db.session.scalars(t4.articles.select().order_by(Article.timestamp.desc())).all()
+        blog_Tag1 = db.session.scalars(t1.tagged_submiited_articles_select().order_by(Article.timestamp.desc())).all()
+        blog_Tag2 = db.session.scalars(t2.tagged_submiited_articles_select().order_by(Article.timestamp.desc())).all()
+        blog_Tag3 = db.session.scalars(t3.tagged_submiited_articles_select().order_by(Article.timestamp.desc())).all()
+        blog_Tag4 = db.session.scalars(t4.tagged_submiited_articles_select().order_by(Article.timestamp.desc())).all()
 
         assert blog_Tag1 == [a3, a1, a2]
         assert blog_Tag2 == [a1, a2]
@@ -165,14 +165,10 @@ class Blogging_Feature_Test(unittest.TestCase):
         db.session.commit()
 
         #testing comment submissions    
-        count_a1_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
-          a1.fetch_approved_comments().subquery()))
-        count_a2_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
-          a2.fetch_approved_comments().subquery()))
-        count_a3_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
-          a3.fetch_approved_comments().subquery()))
-        count_a4_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
-          a4.fetch_approved_comments().subquery())) 
+        count_a1_comments = a1.count_approved_comments()
+        count_a2_comments = a2.count_approved_comments()
+        count_a3_comments = a3.count_approved_comments()
+        count_a4_comments = a4.count_approved_comments()
         
         assert count_a1_comments == 3
         assert count_a2_comments == 1

@@ -1,21 +1,48 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div>
+<div class="row">
+    <div class="col-md-9">
+    {% if current_user.isAdmin %}
+    <div class="d-flex justify-content-end">
+        <a class="btn btn-outline-primary" href="{{ url_for('blog.add') }}">Post Article</a>
+    </div>
+    {% endif %}
     {% for article in articles %}
-        <div class="articleTitle"><h1>{{ article.title }}</h1></div>
-        <div class="articleTag">
-            {% for tag in tags[article] %}
-                <span class="badge rounded-pill text-bg-primary">{{ tag.name }}</span>
-            {% endfor %}
+        <div class="article">
+            <div class="articleTitle"><h1><a href="{{ url_for('blog.article', id=article.id) }}">{{ article.title }}</a></h1></div>
+            <div class="articleInfo">
+                Posted by {{ article.author.username }} on {{ moment(article.timestamp).format("MM/DD/YYYY") }} under
+                {% for tag in g.get('tags',{})[article] %}
+                    <a href="{{ url_for('blog.tag', tag=tag) }}" class="btn btn-outline-primary btn-sm">{{ tag }}</a>
+                {% endfor %}
+            </div>
+            {% if current_user.isAdmin %}
+            <div class="articleAdmin d-flex">
+                {% include "blog/_articleAdminOptions.html" %}
+            </div>
+            {% endif %}
+            <br>
+            <div class="articleBody text-break post-span">{{ article.body|safe| truncate(1000, False, '...' , 300) }}</div>
+            <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('blog.article', id=article.id) }}" class="btn btn-outline-primary">Read More</a>
+                    <a href="{{ url_for('blog.article', id=article.id) + '#comments' }}" class="btn btn-outline-secondary">Comments ({{article.count_approved_comments()}})</a>
+            </div>
+            <br>
+            <br>
         </div>
-        <div class="articleBody">{{ article.body|safe| truncate(500, False, '...' , 300) }}</div>
-        <div class="articleAdditionalOptions">
-            <a href="{{ url_for('blog.article', id=article.id) }}" class="btn btn-outline-primary">Continue Reading</a>
-        </div>
-        <br>
+        <hr>
+    
     {% endfor %}
+    {% include "_pagination.html" %}
+    </div>
+    <div class="col-md-3">
+        {% include "blog/_sidebar.html" %}
+    </div>
+    
 </div>
-{% include "_pagination.html" %}
+
+
+
 {% endblock %}
 

@@ -1,0 +1,26 @@
+<a href="{{ url_for('blog.edit', id = article.id) }}" class="btn btn-outline-primary btn-sm me-2">Edit</a>
+<a class="btn btn-outline-danger btn-sm" href="#deleteModal{{ article.id }}" data-bs-toggle="modal">Delete</a>
+
+<!--Delete Modal-->
+<div class="modal fade" id="deleteModal{{ article.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="deleteModalLabel">{{ _('Confirm Delete') }}</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel"></button>
+            </div>
+            <div class="modal-body">
+                {{ _('Are you sure you want to delete this post?') }} <br><br>
+                <div class="vr"></div>
+                {{ article.body|safe| truncate(500) }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Close') }}</button>
+                <form action="{{ url_for('blog.delete', id = article.id) }}" method="post">
+                    {{ emptyForm.hidden_tag() }}
+                    {{ emptyForm.submit(value=_('Delete'), class="delete btn btn-outline-danger") }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

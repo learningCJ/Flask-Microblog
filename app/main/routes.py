@@ -4,6 +4,7 @@ from flask_login import login_required, current_user
 from app.main.forms import EditProfileForm, EmptyForm
 import sqlalchemy as sa
 from app.models import User, Post, TechStack
+from app.shared_functions import text_linkification
 from datetime import datetime
 from flask_babel import _, get_locale
 from langdetect import detect, LangDetectException
@@ -34,10 +35,7 @@ def index():
             language = detect(form.post.data)
         except LangDetectException:
             language =''
-        URLRegex="http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+#!%]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
-        URLsinBody = set(re.findall(URLRegex, form.post.data))
-        for URLinBody in URLsinBody:
-            form.post.data = form.post.data.replace(URLinBody, f'<a href="{URLinBody}" target="_blank">{URLinBody}</a>')
+        form.post.data = text_linkification(form.post.data)
         post = Post(body=form.post.data, author=current_user, language=language)
         db.session.add(post)
         db.session.commit()

@@ -19,7 +19,7 @@
                         {{_('Microblog')}}
                     </a> 
                     <ul class="dropdown-menu" aria-labelledby="navbarAboutDropDownMenu">
-                        <li><a class="nav-link" href="{{ url_for('main.index') }}">{{ _('Main Feed') }}</a></li>
+                        <li><a class="nav-link" href="{{ url_for('main.index') }}">{{ _('My Feed') }}</a></li>
                         <li><a class="nav-link" href="{{ url_for('main.explore') }}">{{ _('Explore') }}</a></li>
                     </ul>
                 </li>
@@ -37,6 +37,11 @@
             </ul>
             <!--right side of the navbar-->
             <ul class="navbar-nav ms-auto">
+                {% if current_user.isAdmin %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('blog.admin') }}">{{ _('Admin') }}</a>
+                </li>
+                {% endif %}
                 {% if current_user.is_anonymous %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('auth.login') }}">{{ _('Login') }}</a>

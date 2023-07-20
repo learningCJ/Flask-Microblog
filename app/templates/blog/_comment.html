@@ -1,17 +1,21 @@
 <div class="comment">
     <div class="d-flex mb-2">
         <div class="flex-shrink-1 me-2">
+            {% if comment.commenter %}
             <img src = "{{ comment.commenter.avatar(36) }}">
+            {% else %}
+            <img src = "{{ anonymous_avatar(36, comment.email) }}">
+            {% endif %}
         </div>
         <div class="flex-grow-1">
             
             {% set user_link %}
-            {% if not comment.commenter.isTempAccount %}
+            {% if comment.commenter %}
             <a href = "{{ url_for('main.user', username=comment.commenter.username) }}">
                 {{ comment.commenter.username }}
             </a> 
             {% else %}
-            {{ comment.commenter.username }}
+            {{ comment.name }}
             {% endif %}
             {% endset %}
             {{ _('%(username)s said %(when)s:', 
@@ -30,12 +34,12 @@
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postDropDownMenuLink">
                     {% if current_user == comment.commenter %}
                     <li><a class="dropdown-item" href="#deleteModal{{ comment.id }}" data-bs-toggle="modal">{{ _('Delete') }}</a></li>
-                    {% elif current_user.is_authenticated and current_user.is_following(comment.commenter) %}
+                    {% elif comment.commenter and current_user.is_authenticated and current_user.is_following(comment.commenter) %}
                     <form action="{{ url_for('main.unfollow', username=comment.commenter.username) }}" method="post">
                         {{ form.hidden_tag() }}
                         {{ form.submit(value=_("Unfollow " + comment.commenter.username), class="dropdown-item") }}
                     </form>
-                    {% elif current_user.is_authenticated and not current_user.is_following(comment.commenter) %}
+                    {% elif comment.commenter and current_user.is_authenticated and not current_user.is_following(comment.commenter) and not comment.commenter.isTempAccount%}
                     <form action="{{ url_for('main.follow', username=comment.commenter.username) }}" method="post">
                         {{ form.hidden_tag() }}
                         {{ form.submit(value=_("Follow " + comment.commenter.username), class="dropdown-item") }}
@@ -46,6 +50,8 @@
         </div>
         {% endif %}
     </div>
+    
+    
 </div>
 <!--Delete Modal-->
 <div class="modal fade" id="deleteModal{{ comment.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -62,9 +68,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Close') }}</button>
-                <form action="{{ url_for('blog.delete', id = comment.id) }}" method="post">
-                    {{ form.hidden_tag() }}
-                    {{ form.submit(value=_('Delete'), class="delete btn btn-outline-danger") }}
+                <form action="{{ url_for('blog.delete_comment', c_id = comment.id) }}" method="post">
+                    {{ emptyForm.hidden_tag() }}
+                    {{ emptyForm.submit(value=_('Delete'), class="delete btn btn-outline-danger") }}
                 </form>
             </div>
         </div>

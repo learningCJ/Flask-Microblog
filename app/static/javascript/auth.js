@@ -60,8 +60,15 @@ addEventListener("DOMContentLoaded", (event) => {
     let policyRequirements = [lengValidator, capLetterValidator, numValidator, specialCharValidator, lowerCaseLetterValidator]
 
     //initializing all policies to fail
-    policyRequirements.forEach((validator) => domElemUpdate(validator.elem, errorPolicyCSS, successPolicyCSS));
-    domElemUpdate(confirmValidator, errorPolicyCSS, successPolicyCSS);
+    policyRequirements.forEach((validator) => {
+        if (validator.elem !== null){
+            domElemUpdate(validator.elem, errorPolicyCSS, successPolicyCSS);
+        }
+    });
+    if (confirmValidator !== null){
+        domElemUpdate(confirmValidator, errorPolicyCSS, successPolicyCSS);
+    };
+    
 
     //initializing the alerts 
     passwordField.addEventListener("focus", () => {

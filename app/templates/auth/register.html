@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<script type="text/javascript" src="{{ url_for('static', filename='javascript/auth.js') }}"></script>
 <form action="" method="post">
     {{ form.hidden_tag() }}
     <div class="form-floating mb-3">
@@ -28,7 +29,7 @@
             </div>
         </div>
         <!--Password Policy Checker-->
-        <p>{{ form.show_pw(class="form-check-input", id="showPW", onclick="toggle('floatingPW')") }} {{ form.show_pw.label(for="showPW") }}</p>
+        <div>{{ form.show_pw(class="form-check-input", id="showPW", onclick="toggle('floatingPW')") }} {{ form.show_pw.label(for="showPW") }}</div>
         {% include "auth/_password_policy.html" %}
     </div>
     <br>

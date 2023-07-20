@@ -1,21 +1,28 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, EmailField, validators
-from wtforms.validators import DataRequired, Length, Email, ValidationError, Optional
+from wtforms import StringField, SubmitField, EmailField, TextAreaField
+from wtforms.validators import DataRequired, Length, Email, ValidationError
 from flask_ckeditor import CKEditorField
 from flask_babel import lazy_gettext as _l, _
+from app import db
+import sqlalchemy as sa
+from app.models import User
 
 
 class BlogPostForm(FlaskForm):
     title = StringField(_('Title'), validators=[DataRequired(), Length(min=1, max=100)])
-    body = CKEditorField(validators=[DataRequired(), Length(min=1, max=4000)])
+    body = CKEditorField(validators=[DataRequired(), Length(min=1, max=50000)])
     tags = StringField(_('Tags:'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
 
 class CommentForm(FlaskForm):
-    username = StringField(_('Name'),  validators=[Optional(), Length(min=1, max=64)])
-    email = EmailField(_('Email'), validators=[validators.Optional(), Email()])
-    comment = StringField(_('Comment'),  validators=[DataRequired(), Length(min=1, max=140)])
+    username = StringField(_('Name'),  validators=[DataRequired(), Length(min=1, max=64)])
+    email = EmailField(_('Email'), validators=[DataRequired(), Email()])
+    comment = TextAreaField(_('Comment'),  validators=[DataRequired(), Length(min=1, max=140)])
     submit = SubmitField(_l('Submit'))
-
+    
+    def validate_username(self, username):
+        user = db.session.scalar(sa.select(User).filter_by(username=username.data))
+        if user is not None:
+            raise ValidationError(_('Username already exists! Please choose another name'))
    
 

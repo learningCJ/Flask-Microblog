@@ -28,7 +28,7 @@
                 });
             }
         </script>
-        <script type="text/javascript" src="{{ url_for('static', filename='javascript/auth.js') }}"></script>
+   
         <link href="{{ url_for('static',filename='styles/mystyle.css') }}" rel="stylesheet">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,9 +46,10 @@
         <br>
         <!--main container-->
         <main class="container-fluid p-4">
+            <section class="content-section">
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
-                    <div class="alert alert-primary" role="alert">
+                    <div class="alert alert-info" role="alert">
                     {% for message in messages %}
                     {{ message }}
                     {% endfor %}
@@ -56,10 +57,10 @@
                 {% endif %}
             {% endwith %}
             <br>
-            <section class="content-section">
             {% block content %}{% endblock %}
             </section>
         </main>
+       
     </body>
 
     
