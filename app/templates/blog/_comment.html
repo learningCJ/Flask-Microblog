@@ -33,7 +33,7 @@
                 <a class="dropdown-toggle" id="postDropDownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postDropDownMenuLink">
                     {% if current_user == comment.commenter %}
-                    <li><a class="dropdown-item" href="#deleteModal{{ comment.id }}" data-bs-toggle="modal">{{ _('Delete') }}</a></li>
+                    <li><a class="dropdown-item" href="#deleteCommentModal{{ comment.id }}" data-bs-toggle="modal">{{ _('Delete') }}</a></li>
                     {% elif comment.commenter and current_user.is_authenticated and current_user.is_following(comment.commenter) %}
                     <form action="{{ url_for('main.unfollow', username=comment.commenter.username) }}" method="post">
                         {{ form.hidden_tag() }}
@@ -54,7 +54,7 @@
     
 </div>
 <!--Delete Modal-->
-<div class="modal fade" id="deleteModal{{ comment.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteCommentModal{{ comment.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">

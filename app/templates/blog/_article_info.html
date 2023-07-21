@@ -8,12 +8,12 @@
 {% if current_user.isAdmin %}
 <div class="articleAdmin d-flex">
     <a href="{{ url_for('blog.edit', id = article.id) }}" class="btn btn-outline-primary btn-sm me-2">Edit</a>
-    <a class="btn btn-outline-danger btn-sm" href="#deleteModal{{ article.id }}" data-bs-toggle="modal">Delete</a>
+    <a class="btn btn-outline-danger btn-sm" href="#deleteArticleModal{{ article.id }}" data-bs-toggle="modal">Delete</a>
 </div>
 {% endif %}
 
 <!--Delete Modal-->
-<div class="modal fade" id="deleteModal{{ article.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteArticleModal{{ article.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
