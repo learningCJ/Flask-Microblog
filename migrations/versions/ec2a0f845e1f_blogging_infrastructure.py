@@ -73,17 +73,6 @@ def downgrade():
         batch_op.drop_column('isTempAccount')
         batch_op.drop_column('admin')
 
-    op.create_table('_alembic_tmp_article',
-    sa.Column('id', sa.INTEGER(), nullable=False),
-    sa.Column('isSubmitted', sa.BOOLEAN(), nullable=False),
-    sa.Column('title', sa.VARCHAR(length=50), nullable=False),
-    sa.Column('body', sa.VARCHAR(length=5000), nullable=False),
-    sa.Column('user_id', sa.INTEGER(), nullable=False),
-    sa.Column('timestamp', sa.DATETIME(), nullable=False),
-    sa.Column('update_timestamp', sa.DATETIME(), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
     op.drop_table('post_tags')
     with op.batch_alter_table('comment', schema=None) as batch_op:
         batch_op.drop_index(batch_op.f('ix_comment_user_id'))
