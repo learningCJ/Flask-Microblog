@@ -178,8 +178,6 @@ def delete_comment(c_id):
         db.session.commit()
         flash(_('You have successfully deleted the comment!'))
         return redirect(request.referrer)
-    else:
-        return redirect(url_for('main.index'))
 
 @bp.route('/admin', methods=['GET','POST'])
 def admin():
@@ -219,7 +217,7 @@ def deny(c_id):
 @bp.route('/tag/<tag>', methods=['GET'])
 def tag(tag):
     tag = db.session.scalar(sa.select(Tag).filter_by(name=tag))
-    print(tag.name)
+    emptyForm = EmptyForm()
     page = request.args.get('page', default=1, type=int)
     articles = db.paginate(tag.tagged_submiited_articles_select().order_by(Article.timestamp.desc()),
      page=page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
@@ -229,6 +227,6 @@ def tag(tag):
     prev_url=url_for('blog.tag', tag=tag, page=articles.prev_num) \
         if articles.has_prev else None
     all_tags = db.session.scalars(sa.select(Tag))
-    return render_template('blog/blog.html', title=_('Blog'), articles = articles, next_url=next_url, prev_url=prev_url, all_tags=all_tags,tags=g.get('tags',{}))
+    return render_template('blog/blog.html', title=_('Blog'), articles = articles, emptyForm = emptyForm, next_url=next_url, prev_url=prev_url, all_tags=all_tags,tags=g.get('tags',{}))
 
 

@@ -167,6 +167,10 @@ color: black;
     margin-bottom: 4rem;
 }
 
+.articleInfo{
+    margin-bottom: 2rem;
+}
+
 img {
     display: block;
     margin-left: auto;

@@ -4,18 +4,9 @@
 
 <div class="row">
     <div class="col-md-9">
-        <div class="articleTitle"><h1>{{ article.title }}</h1></div>
-        <div class="articleInfo mb-4">
-            <i>Posted by</i> {{ article.author.username }} on {{ moment(article.timestamp).format("MM/DD/YYYY") }} under
-            {% for tag in g.get('tags',{})[article] %}
-                <span class="badge rounded-pill text-bg-primary">{{ tag }}</span>
-            {% endfor %}
+        <div class="articleInfo">
+            {% include "blog/_article_info.html" %}
         </div>
-        {% if current_user.isAdmin %}
-            <div class="articleAdmin d-flex">
-                {% include "blog/_articleAdminOptions.html" %}
-            </div>
-        {% endif %}
         <hr>
         {{ ckeditor.load_code_theme() }}
         <div class="articleBody text-break post-span">{{ article.body|safe }}</div>

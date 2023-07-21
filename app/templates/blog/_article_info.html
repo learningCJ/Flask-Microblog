@@ -1,5 +1,16 @@
-<a href="{{ url_for('blog.edit', id = article.id) }}" class="btn btn-outline-primary btn-sm me-2">Edit</a>
-<a class="btn btn-outline-danger btn-sm" href="#deleteModal{{ article.id }}" data-bs-toggle="modal">Delete</a>
+<div class="articleTitle"><h1><a href="{{ url_for('blog.article', id=article.id) }}">{{ article.title }}</a></h1></div>
+<div class="articleMetadata mb-2">
+    <i>Posted by</i> {{ article.author.username }} on {{ moment(article.timestamp).format("MM/DD/YYYY") }} under
+    {% for tag in g.get('tags',{})[article] %}
+        <a href="{{ url_for('blog.tag', tag=tag) }}" class="btn btn-outline-primary btn-sm">{{ tag }}</a>
+    {% endfor %}
+</div>
+{% if current_user.isAdmin %}
+<div class="articleAdmin d-flex">
+    <a href="{{ url_for('blog.edit', id = article.id) }}" class="btn btn-outline-primary btn-sm me-2">Edit</a>
+    <a class="btn btn-outline-danger btn-sm" href="#deleteModal{{ article.id }}" data-bs-toggle="modal">Delete</a>
+</div>
+{% endif %}
 
 <!--Delete Modal-->
 <div class="modal fade" id="deleteModal{{ article.id }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
