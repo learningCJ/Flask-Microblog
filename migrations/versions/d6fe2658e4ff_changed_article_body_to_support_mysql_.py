@@ -21,7 +21,7 @@ def upgrade():
     with op.batch_alter_table('article', schema=None) as batch_op:
         batch_op.alter_column('body',
                existing_type=sa.VARCHAR(length=5000),
-               type_=sa.VARCHAR(length=16383),
+               type_=sa.VARCHAR(length=14383),
                existing_nullable=False)
 
     # ### end Alembic commands ###
