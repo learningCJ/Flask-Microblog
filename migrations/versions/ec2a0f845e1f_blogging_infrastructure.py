@@ -62,10 +62,7 @@ def upgrade():
     sa.ForeignKeyConstraint(['tag_id'], ['tag.id'], ),
     sa.PrimaryKeyConstraint('tag_id', 'article_id')
     )
-    op.drop_table('_alembic_tmp_article')
-    with op.batch_alter_table('user', schema=None) as batch_op:
-        batch_op.add_column(sa.Column('admin', sa.Boolean(), nullable=True))
-        batch_op.add_column(sa.Column('isTempAccount', sa.Boolean(), nullable=True))
+
 
     # ### end Alembic commands ###
 
