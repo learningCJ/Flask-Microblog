@@ -10,7 +10,7 @@ from app.models import User
 
 class BlogPostForm(FlaskForm):
     title = StringField(_('Title'), validators=[DataRequired(), Length(min=1, max=100)])
-    body = CKEditorField(validators=[DataRequired(), Length(min=1, max=14000)])
+    body = CKEditorField(validators=[DataRequired(), Length(min=1, max=10000)])
     tags = StringField(_('Tags:'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
 
