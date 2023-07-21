@@ -77,10 +77,10 @@ def downgrade():
         batch_op.drop_index(batch_op.f('ix_comment_article_id'))
 
     op.drop_table('article')
-    with op.batch_alter_table('article', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_article_user_id'))
-        batch_op.drop_index(batch_op.f('ix_article_update_timestamp'))
-        batch_op.drop_index(batch_op.f('ix_article_timestamp'))
+    #with op.batch_alter_table('article', schema=None) as batch_op:
+     #   batch_op.drop_index(batch_op.f('ix_article_user_id'))
+      #  batch_op.drop_index(batch_op.f('ix_article_update_timestamp'))
+       # batch_op.drop_index(batch_op.f('ix_article_timestamp'))
 
     
     op.drop_table('tag')
