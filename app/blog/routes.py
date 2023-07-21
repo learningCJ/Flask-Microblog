@@ -112,24 +112,17 @@ def edit(id):
         flash('Only the original author can update the article')
         return redirect(url_for('blog.index'))
     form = BlogPostForm()
-    form.title.data=article.title
-    form.body.data=article.body
     stringTags = ""
-    articleTagList = db.session.scalars(article.tags.select()).all()
-    for tag in articleTagList:
-        if stringTags == "":
-            stringTags = tag.name
-        else:
-            stringTags += ", "+ tag.name
-    form.tags.data = stringTags
 
     if form.validate_on_submit():
         article.title = form.title.data
         article.body = form.body.data
         article.update_timestamp = datetime.utcnow()
+        articleTagList = db.session.scalars(article.tags.select()).all()
         for tag in articleTagList:
             article.untag(tag)
 
+        #Let's put below in a method somewhere. It's shared with adding
         for tag in form.tags.data.split(','):
             if tag:
                 t = db.session.scalar(sa.Select(Tag).filter_by(name=tag.strip()))
@@ -149,6 +142,16 @@ def edit(id):
         
         flash(_('Article has been Edited!'))
         return redirect(url_for('blog.index'))
+    elif request.method =='GET':
+        form.title.data=article.title
+        form.body.data=article.body
+        articleTagList = db.session.scalars(article.tags.select()).all()
+        for tag in articleTagList:
+            if stringTags == "":
+                stringTags = tag.name
+            else:
+                stringTags += ", "+ tag.name
+        form.tags.data = stringTags
 
     return render_template('blog/add_edit_blog.html', title = _('Edit Blog Post'), form=form)
 
