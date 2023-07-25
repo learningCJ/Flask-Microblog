@@ -12,3 +12,4 @@ script.js
 app/auth/__pycache__/
 app/errors/__pycache__/
 migrations/__pycache__/
+migrations/versions/510b8528d631_changed_tag_to_mapped_from_.py

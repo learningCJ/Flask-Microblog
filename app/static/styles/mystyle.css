@@ -172,7 +172,17 @@ color: black;
 }
 
 img {
-    display: block;
     margin-left: auto;
     margin-right: auto;
+    width: 90%;
+}
+
+pre{
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto; 
+}
+
+pre code{
+    overflow-x: auto;
 }

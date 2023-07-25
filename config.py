@@ -32,7 +32,8 @@ class Config(object):
     MIN_PW_LEN = 8
 
     #CKEDITOR
-    CKEDITOR_SERVE_LOCAL = False
+    CKEDITOR_SERVE_LOCAL = True
     CKEDITOR_HEIGHT = 700
     CKEDITOR_ENABLE_CODESNIPPET = True
+    CKEDITOR_CODE_THEME = 'tomorrow'
     #CKEDITOR_FILE_UPLOADER = 'upload'
