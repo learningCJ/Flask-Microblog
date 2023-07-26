@@ -109,14 +109,16 @@ class User(PaginatedAPIMixin,UserMixin,db.Model):
         secondary=followers,
         primaryjoin=followers.c.follower_id == id,
         secondaryjoin=followers.c.followed_id == id,
-        back_populates="followers"
+        back_populates="followers",
+        passive_deletes=True
     )
 
     followers: so.WriteOnlyMapped['User'] = so.relationship(
         secondary=followers,
         primaryjoin=followers.c.followed_id==id,
         secondaryjoin=followers.c.follower_id==id,
-        back_populates="following"
+        back_populates="following",
+        passive_deletes=True
     )
 
     def is_verified(self):
