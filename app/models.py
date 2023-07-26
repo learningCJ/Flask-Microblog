@@ -260,7 +260,7 @@ class Article(db.Model):
     __tablename__= "article"
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     title: so.Mapped[str] = so.mapped_column(sa.String(50))
-    body: so.Mapped[str] = so.mapped_column(sa.String(14383))
+    body: so.Mapped[str] = so.mapped_column(sa.Text(30000))
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
     author: so.Mapped['User'] = so.relationship(back_populates='articles')
     comments: so.WriteOnlyMapped['Comment'] = so.relationship(back_populates='article', passive_deletes=True)
