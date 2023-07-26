@@ -176,6 +176,7 @@ img {
     margin-right: auto;
     max-width: 90%;
     object-fit: cover;
+    overflow: hidden;
 }
 
 pre{
