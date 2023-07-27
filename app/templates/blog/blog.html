@@ -9,17 +9,7 @@
     </div>
     {% endif %}
     {% for article in articles %}
-        <div class="article">
-            <div class="articleInfo">
-                {% include "blog/_article_info.html" %}
-            </div>
-            <div class="articleBody text-break post-span">{{ article.body|safe| truncate(1000, False, '...' , 300) }}</div>
-            <div class="d-flex justify-content-between">
-                <a href="{{ url_for('blog.article', id=article.id) }}" class="btn btn-outline-primary">Read More</a>
-                <a href="{{ url_for('blog.article', id=article.id) + '#comments' }}" class="btn btn-outline-secondary">Comments ({{article.count_approved_comments()}})</a>
-            </div>
-
-        </div>
+        {% include "blog/_article_overview.html" %}
         <hr>
     
     {% endfor %}

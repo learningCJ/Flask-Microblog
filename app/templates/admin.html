@@ -3,23 +3,38 @@
 {% block content %}
     <h1>Comment Approval</h1>
     {% for comment in pendingComments %}
-    <row class="pendingApprovalComments">
-        <div class="col-md-9">
-        
-            {% include "blog/_comment.html" %}
-        </div>
-        <div class="col-md-3 d-flex">
-            <form action="{{ url_for('blog.approve', c_id=comment.id) }}" method="post">
-                {{ emptyForm.hidden_tag() }}
-                {{ emptyForm.submit(value=_("Approve"), class="btn btn-outline-primary") }}
-            </form>
-            <form action="{{ url_for('blog.deny', c_id=comment.id) }}" method="post">
-                {{ emptyForm.hidden_tag() }}
-                {{ emptyForm.submit(value=_("Delete"), class="btn btn-outline-danger") }}
-            </form>
-        </div>
-        
-
-    </row>
+    <div id="pendingApprovalComments">
+        <row class="adminRow">
+            <div class="col-md-9">
+            
+                {% include "blog/_comment.html" %}
+            </div>
+            <div class="col-md-3 d-flex">
+                <form action="{{ url_for('blog.approve', c_id=comment.id) }}" method="post">
+                    {{ emptyForm.hidden_tag() }}
+                    {{ emptyForm.submit(value=_("Approve"), class="btn btn-outline-primary") }}
+                </form>
+                <form action="{{ url_for('blog.deny', c_id=comment.id) }}" method="post">
+                    {{ emptyForm.hidden_tag() }}
+                    {{ emptyForm.submit(value=_("Delete"), class="btn btn-outline-danger") }}
+                </form>
+            </div>
+            
+    
+        </row>
+    </div>
     {% endfor %}
+    <h1>Draft Articles</h1>
+    {% for article in draftArticles %}
+    <div id="DraftArticles">
+        <row class="adminRow">
+            <div class="col-md-9">
+                {% include "blog/_article_overview.html" %}
+            </div>
+            
+        </row>
+    </div>
+    {% endfor %}
+    
+    
 {% endblock %}

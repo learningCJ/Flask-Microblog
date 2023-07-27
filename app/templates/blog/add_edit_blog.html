@@ -29,9 +29,10 @@
         {% for error in form.tags.errors %}
         <span style="color:red;">{{ error }}</span><br>
         {% endfor %}
-        <!--Save Button to be added in the next release-->
-        <!--Submit-->
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <!--Save -->
+            {{ form.save(class="btn btn-outline-primary") }}
+            <!--Submit-->
             {{ form.submit(class="btn btn-outline-primary") }}
         </div>
     </form>

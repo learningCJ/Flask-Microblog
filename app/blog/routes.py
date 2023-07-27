@@ -37,7 +37,11 @@ def add():
         return redirect(url_for('blog.index'))
     form = BlogPostForm()
     if form.validate_on_submit():
-        article = Article(title=form.title.data, body=form.body.data, update_timestamp=None, author = current_user, isSubmitted=True)
+        article = Article(title=form.title.data, body=form.body.data, update_timestamp=None, author = current_user)
+        if form.submit.data:
+            article.isSubmitted = True
+        else:
+            article.isSubmitted = False
         db.session.add(article)
         db.session.commit()
         for tag in form.tags.data.split(','):
@@ -119,6 +123,10 @@ def edit(id):
         article.body = form.body.data
         article.update_timestamp = datetime.utcnow()
         articleTagList = db.session.scalars(article.tags.select()).all()
+        if form.submit.data:
+            article.isSubmitted = True
+        else:
+            article.isSubmitted = False
         for tag in articleTagList:
             article.untag(tag)
 
@@ -188,8 +196,9 @@ def admin():
         flash(_('Insufficient Prvilege'))
         return redirect(url_for('blog.index'))
     pendingComments = db.session.scalars(Comment.fetch_pending_approval_comments()).all()
+    draftArticles = db.session.scalars(Article.fetch_draft()).all()
     emptyForm = EmptyForm()
-    return render_template('admin.html', title=_('Admin'), emptyForm=emptyForm, pendingComments=pendingComments)
+    return render_template('admin.html', title=_('Admin'), emptyForm=emptyForm, pendingComments=pendingComments, draftArticles=draftArticles)
 
 @bp.route('/approve/<c_id>', methods=['POST'])
 def approve(c_id):
