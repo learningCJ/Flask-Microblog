@@ -29,6 +29,15 @@ def before_request():
 
     current_app.jinja_env.globals.update(anonymous_avatar=anonymous_avatar)
 
+def tag_article(article, strTags):
+    for tag in strTags:
+        if tag:
+            t = db.session.scalar(sa.Select(Tag).filter_by(name=tag.strip()))
+            if not t:
+                t = Tag(name=tag.strip())
+                db.session.add(t)
+            article.tag(t)
+    
 
 @bp.route('/add', methods=['GET','POST'])
 def add():
@@ -44,16 +53,12 @@ def add():
             article.isSubmitted = False
         db.session.add(article)
         db.session.commit()
-        for tag in form.tags.data.split(','):
-            if tag:
-                t = db.session.scalar(sa.Select(Tag).filter_by(name=tag.strip()))
-                if not t:
-                    t = Tag(name=tag.strip())
-                    db.session.add(t)
-                article.tag(t)
+        tag_article(article,form.tags.data.split(','))
         db.session.commit()
+        print(article)
         flash(_('Article has been submitted!'))
-        return redirect(url_for('blog.index'))
+        return redirect(url_for('blog/blog.index'))
+        #return redirect(url_for(article, id=article.id))
 
     return render_template('blog/add_edit_blog.html', title = _('Add Blog Post'), form=form)
 
@@ -131,25 +136,12 @@ def edit(id):
             article.untag(tag)
 
         #Let's put below in a method somewhere. It's shared with adding
-        for tag in form.tags.data.split(','):
-            if tag:
-                t = db.session.scalar(sa.Select(Tag).filter_by(name=tag.strip()))
-                if not t:
-                    t = Tag(name=tag.strip())
-                    db.session.add(t)
-                article.tag(t)
+        tag_article(article,form.tags.data.split(','))
         db.session.commit()
-
-        for tag in form.tags.data.split(','):
-            if tag:
-                t = db.session.scalar(sa.Select(Tag).filter_by(name=tag.strip()))
-                if not t:
-                    t = Tag(name=tag.strip())
-                    db.session.add(t)
-                article.tag(t)
         
         flash(_('Article has been Edited!'))
-        return redirect(url_for('blog.index'))
+        return redirect(url_for('blog/blog.index'))
+        #return redirect(url_for(article, id=article.id))
     elif request.method =='GET':
         form.title.data=article.title
         form.body.data=article.body

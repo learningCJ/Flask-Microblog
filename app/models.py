@@ -297,11 +297,11 @@ class Article(db.Model):
 
     def count_approved_comments(self):
         return db.session.scalar(sa.select(sa.func.count()).select_from(
-            sa.select(Comment).where(Comment.article_id == self.id, Comment.isApproved==True).subquery()))
+            self.fetch_approved_comments().subquery()))
     
     def delete(self):
         tag_list = self.tags
-        #loop through the tags and delete all tags that have only 1 article (which is the article being deleted)
+        #loop through the tags and untag each tag
         for tag in db.session.scalars(tag_list.select()).all():
             if tag:
                 self.untag(tag)
