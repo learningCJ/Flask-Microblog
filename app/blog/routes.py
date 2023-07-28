@@ -55,10 +55,8 @@ def add():
         db.session.commit()
         tag_article(article,form.tags.data.split(','))
         db.session.commit()
-        print(article)
         flash(_('Article has been submitted!'))
-        return redirect(url_for('blog.index'))
-        #return redirect(url_for(article, id=article.id))
+        return redirect(url_for('blog.article', id=article.id))
 
     return render_template('blog/add_edit_blog.html', title = _('Add Blog Post'), form=form)
 
@@ -140,8 +138,8 @@ def edit(id):
         db.session.commit()
         
         flash(_('Article has been Edited!'))
-        return redirect(url_for('blog.index'))
-        #return redirect(url_for(article, id=article.id))
+        return redirect(url_for('blog.article', id=article.id))
+        
     elif request.method =='GET':
         form.title.data=article.title
         form.body.data=article.body

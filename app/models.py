@@ -339,8 +339,10 @@ class Tag(db.Model):
     )
     
     def count_articles(self):
+        tagged_articles = self.articles.select()
+        submitted_articles = tagged_articles.filter_by(isSubmitted=True)
         return db.session.scalar(sa.select(sa.func.count()).select_from(
-            self.articles.select().subquery()))      
+            submitted_articles.subquery()))      
     
     def tagged_submiited_articles_select(self):
         return sa.select(Article).filter(Article.tags.contains(self), Article.isSubmitted==True)
