@@ -58,7 +58,8 @@ class Blogging_Feature_Test(unittest.TestCase):
         t2 = Tag(name="tag2")
         t3 = Tag(name="tag3")
         t4 = Tag(name="tag4")
-        db.session.add_all([t1,t2,t3,t4])
+        unused_tag = Tag(name="unused")
+        db.session.add_all([t1,t2,t3,t4,unused_tag])
         
         #associate tags to articles
         a1.tag(t1)
@@ -72,6 +73,10 @@ class Blogging_Feature_Test(unittest.TestCase):
         a3.tag(t3)
         
         a4.tag(t4)
+        
+        a_draft1.tag(unused_tag)
+        a_draft2.tag(unused_tag)
+
         db.session.commit()
 
         #test articles given tag
@@ -85,20 +90,17 @@ class Blogging_Feature_Test(unittest.TestCase):
         assert blog_Tag3 == [a3, a2]
         assert blog_Tag4 == [a4]
 
-        #Retrieve tags given an article
-        count_articles_t1 = db.session.scalar(sa.select(sa.func.count()).select_from(
-            t1.articles.select().subquery()))
-        count_articles_t2 = db.session.scalar(sa.select(sa.func.count()).select_from(
-            t2.articles.select().subquery()))
-        count_articles_t3 = db.session.scalar(sa.select(sa.func.count()).select_from(
-            t3.articles.select().subquery()))
-        count_articles_t4 = db.session.scalar(sa.select(sa.func.count()).select_from(
-            t4.articles.select().subquery()))
-        
-        assert count_articles_t1 == 3
-        assert count_articles_t2 == 2
-        assert count_articles_t3 == 2
-        assert count_articles_t4 == 1
+        #test all tag retrieval make sure unused_tag doesn't show up
+        all_tags = db.session.scalars(Tag.fetch_all_tags().order_by(Tag.name.asc())).all()
+
+        assert all_tags == [t1, t2, t3, t4]
+
+        #test that all tags have the correct number of articles
+        assert t1.count_articles() == 3
+        assert t2.count_articles() == 2
+        assert t3.count_articles() == 2
+        assert t4.count_articles() == 1
+        assert unused_tag.count_articles() == 0
 
         #delete tags from articles
         a2.untag(t1)

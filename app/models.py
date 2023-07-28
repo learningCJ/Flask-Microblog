@@ -344,6 +344,10 @@ class Tag(db.Model):
         return db.session.scalar(sa.select(sa.func.count()).select_from(
             submitted_articles.subquery()))      
     
+    @staticmethod
+    def fetch_all_tags():
+        return sa.select(Tag).join(Tag.articles).filter(Article.isSubmitted==True).group_by(Tag.id).having(sa.func.count(Article.id)>0)
+    
     def tagged_submiited_articles_select(self):
         return sa.select(Article).filter(Article.tags.contains(self), Article.isSubmitted==True)
 

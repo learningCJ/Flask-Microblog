@@ -189,3 +189,8 @@ pre{
 pre code{
     overflow-x: auto;
 }
+
+.text-bg-secondary{
+    font-size: 1rem;
+    vertical-align:middle;
+}

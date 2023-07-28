@@ -13,9 +13,9 @@ from datetime import datetime
 @bp.before_request
 def before_request():
     tags={}
-    all_articles = Article.fetch_submitted()
+    all_articles = db.session.scalars(Article.fetch_submitted()).all()
     #Creating a dictionary with artcicle - list of tags to display the tags on the articles
-    for article in db.session.scalars(all_articles).all():
+    for article in all_articles:
         for tag in db.session.scalars(article.tags.select()).all():
             if article not in tags:
                 tags[article] = [tag.name.strip()]
@@ -23,8 +23,7 @@ def before_request():
                 tags[article].append(tag.name.strip()) 
     g.tags = tags
 
-
-    all_tags = db.session.scalars(sa.select(Tag).order_by(Tag.name))
+    all_tags = db.session.scalars(Tag.fetch_all_tags().order_by(Tag.name)).all()
     g.all_tags = all_tags
 
     current_app.jinja_env.globals.update(anonymous_avatar=anonymous_avatar)
@@ -32,9 +31,10 @@ def before_request():
 def tag_article(article, strTags):
     for tag in strTags:
         if tag:
-            t = db.session.scalar(sa.Select(Tag).filter_by(name=tag.strip()))
+            tag = tag.strip()
+            t = db.session.scalar(sa.Select(Tag).filter_by(name=tag))
             if not t:
-                t = Tag(name=tag.strip())
+                t = Tag(name=tag)
                 db.session.add(t)
             article.tag(t)
     
@@ -55,8 +55,12 @@ def add():
         db.session.commit()
         tag_article(article,form.tags.data.split(','))
         db.session.commit()
-        flash(_('Article has been submitted!'))
-        return redirect(url_for('blog.article', id=article.id))
+        if form.submit.data:
+            flash(_('Article has been submitted!'))
+            return redirect(url_for('blog.article', id=article.id))
+        else:
+            flash(_('Article has been saved to drafts!'))
+            return redirect(url_for('blog.edit', id=article.id))
 
     return render_template('blog/add_edit_blog.html', title = _('Add Blog Post'), form=form)
 
@@ -136,9 +140,12 @@ def edit(id):
         #Let's put below in a method somewhere. It's shared with adding
         tag_article(article,form.tags.data.split(','))
         db.session.commit()
-        
-        flash(_('Article has been Edited!'))
-        return redirect(url_for('blog.article', id=article.id))
+        if form.submit.data:
+            flash(_('Article has been Edited!'))
+            return redirect(url_for('blog.article', id=article.id))
+        else:
+            flash(_('Article has been saved to drafts!'))
+            return redirect(url_for('blog.edit', id=article.id))
         
     elif request.method =='GET':
         form.title.data=article.title
@@ -186,7 +193,7 @@ def admin():
         flash(_('Insufficient Prvilege'))
         return redirect(url_for('blog.index'))
     pendingComments = db.session.scalars(Comment.fetch_pending_approval_comments()).all()
-    draftArticles = db.session.scalars(Article.fetch_draft()).all()
+    draftArticles = db.session.scalars(Article.fetch_draft().order_by(Article.timestamp.desc())).all()
     emptyForm = EmptyForm()
     return render_template('admin.html', title=_('Admin'), emptyForm=emptyForm, pendingComments=pendingComments, draftArticles=draftArticles)
 
