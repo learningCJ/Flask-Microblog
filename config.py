@@ -37,3 +37,5 @@ class Config(object):
     CKEDITOR_ENABLE_CODESNIPPET = True
     CKEDITOR_CODE_THEME = 'tomorrow'
     #CKEDITOR_FILE_UPLOADER = 'upload'
+
+    SESSION_TYPE = 'sqlalchemy'

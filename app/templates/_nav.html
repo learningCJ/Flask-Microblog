@@ -19,8 +19,8 @@
                         {{_('Microblog')}}
                     </a> 
                     <ul class="dropdown-menu" aria-labelledby="navbarAboutDropDownMenu">
-                        <li><a class="nav-link" href="{{ url_for('main.index') }}">{{ _('My Feed') }}</a></li>
-                        <li><a class="nav-link" href="{{ url_for('main.explore') }}">{{ _('Explore') }}</a></li>
+                        <li><a class="nav-link" href="{{ url_for('microblog.index') }}">{{ _('My Feed') }}</a></li>
+                        <li><a class="nav-link" href="{{ url_for('microblog.explore') }}">{{ _('Explore') }}</a></li>
                     </ul>
                 </li>
 
@@ -39,7 +39,7 @@
             <ul class="navbar-nav ms-auto">
                 {% if current_user.isAdmin %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('blog.admin') }}">{{ _('Admin') }}</a>
+                    <a class="nav-link" href="{{ url_for('main.admin') }}">{{ _('Admin') }}</a>
                 </li>
                 {% endif %}
                 {% if current_user.is_anonymous %}
@@ -56,7 +56,7 @@
                 {% endif %}
             </ul>
                 {% if g.search_form %}
-                <form class="d-flex" role ="search" method="get" action="{{ url_for('main.search') }}" id="searchBox">
+                <form class="d-flex" role ="search" method="get" action="{{ url_for('microblog.search') }}" id="searchBox">
                     {{ g.search_form.q(type='search', size=20, class='form-control me-2', placeholder=g.search_form.q.label.text) }}
                 </form>
                 {% endif %}

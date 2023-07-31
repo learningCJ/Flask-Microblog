@@ -12,6 +12,8 @@ from config import Config
 from elasticsearch import Elasticsearch
 import textile
 from flask_ckeditor import CKEditor
+from flask_session_captcha import FlaskSessionCaptcha
+from flask_sessionstore import Session
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -22,6 +24,7 @@ mail = Mail()
 moment = Moment()
 babel = Babel()
 ckeditor = CKEditor()
+#captcha = FlaskSessionCaptcha()
 
 def textile_filter(text):
      return textile.textile(text)
@@ -42,6 +45,9 @@ def create_app(config_class=Config):
     moment.init_app(app)
     babel.init_app(app)
     ckeditor.init_app(app)
+    #app.config['SESSION_SQLALCHEMY'] = db
+    #Session(app)
+    #captcha.init_app(app)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
@@ -49,14 +55,17 @@ def create_app(config_class=Config):
     from app.auth import bp as auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
     
-    from app.main import bp as main_bp
-    app.register_blueprint(main_bp, url_prefix='/microblog')
+    from app.microblog import bp as microblog_bp
+    app.register_blueprint(microblog_bp, url_prefix='/microblog')
 
     from app.api import bp as api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
 
     from app.blog import bp as blog_bp
     app.register_blueprint(blog_bp)
+
+    from app.main import bp as main_bp
+    app.register_blueprint(main_bp)
 
     if not app.debug and not app.testing:
         if app.config['MAIL_SERVER']:

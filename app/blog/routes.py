@@ -6,16 +6,18 @@ from app import db
 from flask_login import current_user
 from flask import flash, redirect, url_for, render_template, request, current_app, g
 from flask_babel import _
-from app.models import Article, Tag, User, Comment
+from app.models import Article, Tag, Comment
 import sqlalchemy as sa
 from datetime import datetime
 
 @bp.before_request
 def before_request():
     tags={}
-    all_articles = db.session.scalars(Article.fetch_submitted()).all()
-    #Creating a dictionary with artcicle - list of tags to display the tags on the articles
-    for article in all_articles:
+    page = request.args.get('page', default=1, type=int)
+    articles = db.paginate(Article.fetch_submitted().order_by(Article.timestamp.desc()),
+     page=page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
+    #Creating a dictionary with artcicle - list of tags to display the tags on the articles of this page
+    for article in articles:
         for tag in db.session.scalars(article.tags.select()).all():
             if article not in tags:
                 tags[article] = [tag.name.strip()]
@@ -97,7 +99,8 @@ def article(id):
         if current_user.is_authenticated:
             comment = Comment(comment=commentForm.comment.data, article=article, commenter=current_user, isApproved=True)
         else:
-            comment = Comment(comment=commentForm.comment.data, article=article, name=commentForm.username.data, email=commentForm.email.data, isApproved=False)
+            comment = Comment(comment=commentForm.comment.data, article=article, 
+                              name=commentForm.username.data, email=commentForm.email.data, isApproved=False)
         db.session.add(comment)
         db.session.commit()
         
@@ -108,7 +111,8 @@ def article(id):
 
         return redirect(url_for('blog.article', id = id))
 
-    return render_template('blog/article.html', title=_(article.title), article=article, commentForm=commentForm, emptyForm = emptyForm,  comments=comments)
+    return render_template('blog/article.html', title=_(article.title), article=article, commentForm=commentForm, 
+                           emptyForm = emptyForm,  comments=comments)
 
 @bp.route('/edit/<id>', methods=['GET', 'POST'])
 def edit(id):
@@ -168,7 +172,7 @@ def delete(id):
         article = db.session.get(Article,id)
         if article is None:
             flash(_('The article you deleted could not be found'))
-            return redirect(request.referrer)
+            return redirect(url_for('blog.index'))
         article.delete()
         db.session.commit()
         flash(_('You have successfully deleted the article!'))
@@ -186,42 +190,6 @@ def delete_comment(c_id):
         db.session.commit()
         flash(_('You have successfully deleted the comment!'))
         return redirect(request.referrer)
-
-@bp.route('/admin', methods=['GET','POST'])
-def admin():
-    if current_user.is_anonymous or not current_user.isAdmin():
-        flash(_('Insufficient Prvilege'))
-        return redirect(url_for('blog.index'))
-    pendingComments = db.session.scalars(Comment.fetch_pending_approval_comments()).all()
-    draftArticles = db.session.scalars(Article.fetch_draft().order_by(Article.timestamp.desc())).all()
-    emptyForm = EmptyForm()
-    return render_template('admin.html', title=_('Admin'), emptyForm=emptyForm, pendingComments=pendingComments, draftArticles=draftArticles)
-
-@bp.route('/approve/<c_id>', methods=['POST'])
-def approve(c_id):
-    form = EmptyForm()
-    if form.validate_on_submit():
-        comment = db.session.get(Comment,c_id)
-        if not comment:
-            flash('Comment does not exist')
-            return redirect(url_for('blog.admin'))
-        comment.approve()
-        db.session.commit()
-        flash('Comment has been approved')
-        return redirect(url_for('blog.admin'))
-    
-@bp.route('/deny/<c_id>', methods=['POST'])
-def deny(c_id):
-    form = EmptyForm()
-    if form.validate_on_submit():
-        comment = db.session.get(Comment,c_id)
-        if not comment:
-            flash('Comment does not exist')
-            return redirect(url_for('blog.admin'))
-        comment.deny()
-        db.session.commit()
-        flash('Comment has been deleted')
-        return redirect(url_for('blog.admin'))
 
 @bp.route('/tag/<tag>', methods=['GET'])
 def tag(tag):

@@ -352,7 +352,9 @@ class Tag(db.Model):
         return sa.select(Article).filter(Article.tags.contains(self), Article.isSubmitted==True)
 
     def delete(self):
-        for article in db.session.scalars(self.articles.select()).all():
+        tagged_articles = db.session.scalars(self.articles.select()).all()
+
+        for article in tagged_articles:
             article.untag(self)
         db.session.execute(sa.delete(Tag).where(Tag.id == self.id))
 
