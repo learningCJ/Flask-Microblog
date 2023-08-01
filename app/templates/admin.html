@@ -10,11 +10,11 @@
                 {% include "blog/_comment.html" %}
             </div>
             <div class="col-md-3 d-flex">
-                <form action="{{ url_for('blog.approve', c_id=comment.id) }}" method="post">
+                <form action="{{ url_for('main.approve', c_id=comment.id) }}" method="post">
                     {{ emptyForm.hidden_tag() }}
                     {{ emptyForm.submit(value=_("Approve"), class="btn btn-outline-primary") }}
                 </form>
-                <form action="{{ url_for('blog.deny', c_id=comment.id) }}" method="post">
+                <form action="{{ url_for('main.deny', c_id=comment.id) }}" method="post">
                     {{ emptyForm.hidden_tag() }}
                     {{ emptyForm.submit(value=_("Delete"), class="btn btn-outline-danger") }}
                 </form>
