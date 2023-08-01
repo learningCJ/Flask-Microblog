@@ -60,7 +60,6 @@ def get_articles_with_tags_series():
 
     cache.set('articles_with_tags', articles_with_tags, timeout=3600)
     cache.set('series_with_articles', series_with_articles, timeout=3600)
-
     return articles_with_tags, series_with_articles
 
 @bp.route('/', methods=['GET','POST'])
@@ -104,7 +103,7 @@ def add():
         else:
             flash(_('Article has been saved to drafts!'))
             return redirect(url_for('blog.edit', id=article.id))
-    #cache.clear()
+    cache.clear()
     return render_template('blog/add_edit_blog.html', title = _('Add Blog Post'), form=form)
 
 
@@ -196,7 +195,7 @@ def edit(id):
             else:
                 stringTags += ", "+ tag.name
         form.tags.data = stringTags
-    #cache.clear()
+    cache.clear()
     return render_template('blog/add_edit_blog.html', title = _('Edit Blog Post'), form=form)
 
 
@@ -211,7 +210,7 @@ def delete(id):
         article.delete()
         db.session.commit()
         flash(_('You have successfully deleted the article!'))
-        #cache.clear()
+        cache.clear()
         return redirect(url_for('blog.index'))
 
 @bp.route('/delete-comment/<c_id>', methods=['POST'])
