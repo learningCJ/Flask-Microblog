@@ -190,7 +190,13 @@ pre code{
     overflow-x: auto;
 }
 
-.text-bg-secondary{
+.badge.text-bg-secondary {
+ 
     font-size: 1rem;
     vertical-align:middle;
+
+}
+
+#articleTagBadge{
+    vertical-align:bottom;
 }

@@ -12,8 +12,8 @@ from datetime import datetime
 
 @bp.before_request
 def before_request():
-    all_tags = db.session.scalars(Tag.fetch_all_tags().order_by(Tag.name)).all()
-    g.all_tags = all_tags
+
+    g.all_tags = get_all_tags()
 
     current_app.jinja_env.globals.update(anonymous_avatar=anonymous_avatar)
 
@@ -27,7 +27,22 @@ def tag_article(article, strTags):
                 db.session.add(t)
             article.tag(t)
 
+def get_all_tags():
+    all_tags = cache.get('all_tags')
+
+    if all_tags:
+        return all_tags
+
+    all_tags = db.session.scalars(Tag.fetch_all_tags().order_by(Tag.name)).all()
+    return all_tags
+
 def get_articles_with_tags_series():
+    articles_with_tags = cache.get('articles_with_tags')
+    series_with_articles = cache.get('series_with_articles')
+
+    if articles_with_tags and series_with_articles:
+        return articles_with_tags, series_with_articles 
+
     articles = db.session.scalars(Article.fetch_submitted()).all()
     
     articles_with_tags={}
@@ -36,9 +51,9 @@ def get_articles_with_tags_series():
     for article in articles:
         for tag in db.session.scalars(article.tags.select()).all():
             if article not in articles_with_tags:
-                articles_with_tags[article] = [tag.name.strip()]
+                articles_with_tags[article.id] = [tag.name.strip()]
             else:
-                articles_with_tags[article].append(tag.name.strip())
+                articles_with_tags[article.id].append(tag.name.strip())
         if article.series and article.series not in series_with_articles:
             series_with_articles[article.series] = list(db.session.scalars(Article.fetch_all_series(article.series).order_by(
                 Article.seriesOrder)).all()) 
@@ -89,7 +104,7 @@ def add():
         else:
             flash(_('Article has been saved to drafts!'))
             return redirect(url_for('blog.edit', id=article.id))
-
+    #cache.clear()
     return render_template('blog/add_edit_blog.html', title = _('Add Blog Post'), form=form)
 
 
@@ -181,7 +196,7 @@ def edit(id):
             else:
                 stringTags += ", "+ tag.name
         form.tags.data = stringTags
-
+    #cache.clear()
     return render_template('blog/add_edit_blog.html', title = _('Edit Blog Post'), form=form)
 
 
@@ -196,6 +211,7 @@ def delete(id):
         article.delete()
         db.session.commit()
         flash(_('You have successfully deleted the article!'))
+        #cache.clear()
         return redirect(url_for('blog.index'))
 
 @bp.route('/delete-comment/<c_id>', methods=['POST'])

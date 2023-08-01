@@ -9,8 +9,8 @@
 </div>
 <div class="articleMetadata mb-2">
     <i>Posted by</i> {{ article.author.username }} on {{ moment(article.timestamp).format("MM/DD/YYYY") }} under
-    {% for tag in articles_with_tags[article] %}
-        <a href="{{ url_for('blog.tag', tag=tag) }}" class="btn btn-outline-primary btn-sm">{{ tag }}</a>
+    {% for tag in articles_with_tags[article.id] %}
+        <a href="{{ url_for('blog.tag', tag=tag) }}" class="btn btn-outline-primary btn-sm" id="articleTagBadge">{{ tag }}</a>
     {% endfor %}
 </div>
 {% if current_user.isAdmin %}
