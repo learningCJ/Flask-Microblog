@@ -9,7 +9,7 @@
 </div>
 <div class="articleMetadata mb-2">
     <i>Posted by</i> {{ article.author.username }} on {{ moment(article.timestamp).format("MM/DD/YYYY") }} under
-    {% for tag in g.get('tags',{})[article] %}
+    {% for tag in articles_with_tags[article] %}
         <a href="{{ url_for('blog.tag', tag=tag) }}" class="btn btn-outline-primary btn-sm">{{ tag }}</a>
     {% endfor %}
 </div>

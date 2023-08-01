@@ -8,6 +8,9 @@
             {% include "blog/_article_info.html" %}
         </div>
         <hr>
+        {% if article.series %}
+        {% include "blog/_series.html" %}
+        {% endif %}
         {{ ckeditor.load_code_theme() }}
         <div class="articleBody text-break post-span">{{ article.body|safe }}</div>
         <br>
@@ -50,7 +53,7 @@
             </form>
             <!--Comments-->
             {% if comments %}
-            <div class="articleComments">
+            <div id="articleComments">
                 {% for comment in comments %}
                     {% include "blog/_comment.html" %}
                 {% endfor %}

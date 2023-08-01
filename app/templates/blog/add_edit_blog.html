@@ -29,6 +29,23 @@
         {% for error in form.tags.errors %}
         <span style="color:red;">{{ error }}</span><br>
         {% endfor %}
+        <!--Series Name-->
+        <div class="form mb-3">
+        {{ form.series.label() }}
+        {{ form.series(class="form-control", id="seriesName") }}
+        </div>
+        {% for error in form.series.errors %}
+        <span style="color:red;">{{ error }}</span><br>
+        {% endfor %}
+        <!--Series Order-->
+        <div class="form mb-3">
+        {{ form.seriesOrder.label() }}
+        {{ form.seriesOrder(class="form-control", id="seriesName") }}
+        </div>
+        {% for error in form.seriesOrder.errors %}
+        <span style="color:red;">{{ error }}</span><br>
+        {% endfor %}
+
         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <!--Save -->
             {{ form.save(class="btn btn-outline-primary") }}

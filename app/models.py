@@ -269,6 +269,8 @@ class Article(db.Model):
     timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=datetime.utcnow)
     update_timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=datetime.utcnow)
     isSubmitted: so.Mapped[bool] = so.mapped_column(default=False)
+    series: so.Mapped[Optional[str]] = so.mapped_column(sa.String(100))
+    seriesOrder: so.Mapped[Optional[int]] = so.mapped_column()
 
     tags: so.WriteOnlyMapped['Tag'] = so.relationship(
         secondary=post_tags,
@@ -324,6 +326,10 @@ class Article(db.Model):
     @staticmethod
     def fetch_article(id):
         return sa.select(Article).filter_by(id=id)
+    
+    @staticmethod
+    def fetch_all_series(series):
+        return sa.select(Article).filter_by(series=series, isSubmitted=True)
         
     def __repr__(self):
         return '<Article: {}>'.format(self.title)

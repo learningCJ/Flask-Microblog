@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, EmailField, TextAreaField
+from wtforms import StringField, SubmitField, EmailField, TextAreaField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, ValidationError
 from flask_ckeditor import CKEditorField
 from flask_babel import lazy_gettext as _l, _
@@ -12,6 +12,8 @@ class BlogPostForm(FlaskForm):
     title = StringField(_('Title'), validators=[DataRequired(), Length(min=1, max=90)])
     body = CKEditorField(validators=[DataRequired(), Length(min=1, max=37000)])
     tags = StringField(_('Tags:'), validators=[DataRequired()])
+    series = StringField(_('Series'),validators=[Length(max=100)])
+    seriesOrder = IntegerField(_('Series Order'))
     save = SubmitField(_l('Save to Drafts'))
     submit = SubmitField(_l('Submit'))
 

@@ -2,6 +2,9 @@
     <div class="articleInfo">
         {% include "blog/_article_info.html" %}
     </div>
+    {% if article.series %}
+        {% include "blog/_series.html" %}
+    {% endif %}
     <div class="articleBody text-break post-span">{{ article.body|safe| truncate(1000, False, '...' , 300) }}</div>
     <div class="d-flex justify-content-between">
         <a href="{{ url_for('blog.article', id=article.id) }}" class="btn btn-outline-primary">Read More</a>

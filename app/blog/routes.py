@@ -2,7 +2,7 @@ from app.blog import bp
 from app.blog.forms import BlogPostForm, CommentForm
 from app.main.forms import EmptyForm
 from app.shared_functions import text_linkification, anonymous_avatar
-from app import db
+from app import db, cache
 from flask_login import current_user
 from flask import flash, redirect, url_for, render_template, request, current_app, g
 from flask_babel import _
@@ -12,19 +12,6 @@ from datetime import datetime
 
 @bp.before_request
 def before_request():
-    tags={}
-    page = request.args.get('page', default=1, type=int)
-    articles = db.paginate(Article.fetch_submitted().order_by(Article.timestamp.desc()),
-     page=page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
-    #Creating a dictionary with artcicle - list of tags to display the tags on the articles of this page
-    for article in articles:
-        for tag in db.session.scalars(article.tags.select()).all():
-            if article not in tags:
-                tags[article] = [tag.name.strip()]
-            else:
-                tags[article].append(tag.name.strip()) 
-    g.tags = tags
-
     all_tags = db.session.scalars(Tag.fetch_all_tags().order_by(Tag.name)).all()
     g.all_tags = all_tags
 
@@ -39,7 +26,45 @@ def tag_article(article, strTags):
                 t = Tag(name=tag)
                 db.session.add(t)
             article.tag(t)
+
+def get_articles_with_tags_series():
+    articles = db.session.scalars(Article.fetch_submitted()).all()
     
+    articles_with_tags={}
+    series_with_articles = {}
+
+    for article in articles:
+        for tag in db.session.scalars(article.tags.select()).all():
+            if article not in articles_with_tags:
+                articles_with_tags[article] = [tag.name.strip()]
+            else:
+                articles_with_tags[article].append(tag.name.strip())
+        if article.series and article.series not in series_with_articles:
+            series_with_articles[article.series] = list(db.session.scalars(Article.fetch_all_series(article.series).order_by(
+                Article.seriesOrder)).all()) 
+
+    cache.set('articles_with_tags', articles_with_tags, timeout=3600)
+    cache.set('series_with_articles', series_with_articles, timeout=3600)
+
+    return articles_with_tags, series_with_articles
+
+@bp.route('/', methods=['GET','POST'])
+@bp.route('/index', methods=['GET','POST'])
+def index():
+    emptyForm = EmptyForm()
+    page = request.args.get('page', default=1, type=int)
+    articles = db.paginate(Article.fetch_submitted().order_by(Article.timestamp.desc()),
+                           page=page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
+
+    next_url=url_for('blog.index', page=articles.next_num) \
+        if articles.has_next else None
+    prev_url=url_for('blog.index', page=articles.prev_num) \
+        if articles.has_prev else None
+    
+    articles_with_tags, series_with_articles = get_articles_with_tags_series()
+    
+    return render_template('blog/blog.html', title=_('Blog'), articles = articles, articles_with_tags=articles_with_tags,
+                           series_with_articles=series_with_articles, next_url=next_url, prev_url=prev_url, emptyForm=emptyForm)
 
 @bp.route('/add', methods=['GET','POST'])
 def add():
@@ -48,7 +73,8 @@ def add():
         return redirect(url_for('blog.index'))
     form = BlogPostForm()
     if form.validate_on_submit():
-        article = Article(title=form.title.data, body=form.body.data, update_timestamp=None, author = current_user)
+        article = Article(title=form.title.data, body=form.body.data, update_timestamp=None, 
+                          author = current_user, series = form.series.data, seriesOrder = form.seriesOrder.data)
         if form.submit.data:
             article.isSubmitted = True
         else:
@@ -66,20 +92,7 @@ def add():
 
     return render_template('blog/add_edit_blog.html', title = _('Add Blog Post'), form=form)
 
-@bp.route('/', methods=['GET','POST'])
-@bp.route('/index', methods=['GET','POST'])
-def index():
-    emptyForm = EmptyForm()
-    page = request.args.get('page', default=1, type=int)
-    articles = db.paginate(Article.fetch_submitted().order_by(Article.timestamp.desc()),
-     page=page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
 
-    next_url=url_for('blog.index', page=articles.next_num) \
-        if articles.has_next else None
-    prev_url=url_for('blog.index', page=articles.prev_num) \
-        if articles.has_prev else None
-    
-    return render_template('blog/blog.html', title=_('Blog'), articles = articles, next_url=next_url, prev_url=prev_url, emptyForm=emptyForm)
 
 @bp.route('/article/<id>', methods=['GET','POST'])
 def article(id):
@@ -109,10 +122,13 @@ def article(id):
         else:
             flash(_('Comment added successfully'))
 
-        return redirect(url_for('blog.article', id = id))
+        redirect_url = url_for('blog.article', id = id )+"#articleComments"
+        return redirect(redirect_url)
+
+    articles_with_tags, series_with_articles = get_articles_with_tags_series()
 
     return render_template('blog/article.html', title=_(article.title), article=article, commentForm=commentForm, 
-                           emptyForm = emptyForm,  comments=comments)
+                           articles_with_tags=articles_with_tags, series_with_articles=series_with_articles, emptyForm = emptyForm,  comments=comments)
 
 @bp.route('/edit/<id>', methods=['GET', 'POST'])
 def edit(id):
@@ -133,6 +149,8 @@ def edit(id):
         article.title = form.title.data
         article.body = form.body.data
         article.update_timestamp = datetime.utcnow()
+        article.series = form.series.data
+        article.seriesOrder = form.seriesOrder.data
         articleTagList = db.session.scalars(article.tags.select()).all()
         if form.submit.data:
             article.isSubmitted = True
@@ -154,6 +172,8 @@ def edit(id):
     elif request.method =='GET':
         form.title.data=article.title
         form.body.data=article.body
+        form.series.data=article.series
+        form.seriesOrder.data=article.seriesOrder
         articleTagList = db.session.scalars(article.tags.select()).all()
         for tag in articleTagList:
             if stringTags == "":
@@ -204,6 +224,10 @@ def tag(tag):
     prev_url=url_for('blog.tag', tag=tag, page=articles.prev_num) \
         if articles.has_prev else None
     all_tags = db.session.scalars(sa.select(Tag))
-    return render_template('blog/blog.html', title=_('Blog'), articles = articles, emptyForm = emptyForm, next_url=next_url, prev_url=prev_url, all_tags=all_tags,tags=g.get('tags',{}))
+
+    articles_with_tags, series_with_articles = get_articles_with_tags_series()
+
+    return render_template('blog/blog.html', title=_('Blog'), articles = articles, articles_with_tags = articles_with_tags, series_with_articles = series_with_articles,
+                           emptyForm = emptyForm, next_url=next_url, prev_url=prev_url, all_tags=all_tags,tags=g.get('tags',{}))
 
 

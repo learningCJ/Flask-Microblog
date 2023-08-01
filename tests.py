@@ -12,7 +12,6 @@ class TestConfig(Config):
     ELASTICSEARCH_URL=''
 
 class Blogging_Feature_Test(unittest.TestCase):
-    #let's figure out what the logical breakup of this is
     def setUp(self):
         self.app = create_app(TestConfig)
         self.app_context = self.app.app_context()
@@ -35,22 +34,30 @@ class Blogging_Feature_Test(unittest.TestCase):
 
         #Add articles
         now = datetime.utcnow()
-        a1 = Article(title="article 1", body="Article 1 Body", timestamp=now+timedelta(seconds=2), user_id=1, isSubmitted=True)
-        a2 = Article(title="article 2", body="Article 2 Body", timestamp=now+timedelta(seconds=1), user_id=1, isSubmitted=True)
-        a3 = Article(title="article 3", body="Article 3 Body", timestamp=now+timedelta(seconds=4), user_id=1, isSubmitted=True)
-        a4 = Article(title="article 4", body="Article 3 Body", timestamp=now+timedelta(seconds=3), user_id=1, isSubmitted=True)
-        a_draft1 = Article(title="Unsubmitted Post 1", body="Unsubmitted Body 1", timestamp=now+timedelta(seconds=2), user_id=1, isSubmitted = False)
-        a_draft2 = Article(title="Unsubmitted Post 2", body="Unsubmitted Body 2", timestamp=now+timedelta(seconds=1), user_id=1, isSubmitted = False)
+        a1 = Article(title="article 1", body="Article 1 Body", 
+                     timestamp=now+timedelta(seconds=2), user_id=1, isSubmitted=True)
+        a2 = Article(title="article 2", body="Article 2 Body", 
+                     timestamp=now+timedelta(seconds=1), user_id=1, isSubmitted=True)
+        a3 = Article(title="article 3", body="Article 3 Body", 
+                     timestamp=now+timedelta(seconds=4), user_id=1, isSubmitted=True)
+        a4 = Article(title="article 4", body="Article 3 Body", 
+                     timestamp=now+timedelta(seconds=3), user_id=1, isSubmitted=True)
+        a_draft1 = Article(title="Unsubmitted Post 1", body="Unsubmitted Body 1", 
+                           timestamp=now+timedelta(seconds=2), user_id=1, isSubmitted = False)
+        a_draft2 = Article(title="Unsubmitted Post 2", body="Unsubmitted Body 2", 
+                           timestamp=now+timedelta(seconds=1), user_id=1, isSubmitted = False)
         
         db.session.add_all([a1,a2,a3,a4,a_draft1,a_draft2])
         db.session.commit()
 
-        #test articles being fetched and the order of it. Also making sure draft articles don't show up
-        blog = db.session.scalars(Article.fetch_submitted().order_by(Article.timestamp.desc())).all()
+        #test articles being fetched and their order. Also make sure draft articles don't show up
+        blog = db.session.scalars(Article.fetch_submitted().order_by(
+            Article.timestamp.desc())).all()
         assert blog == [a3, a4, a1, a2]
 
         #fetching draft articles
-        draft_articles = db.session.scalars(Article.fetch_draft().order_by(Article.timestamp.desc())).all()
+        draft_articles = db.session.scalars(Article.fetch_draft().order_by(
+            Article.timestamp.desc())).all()
         assert draft_articles == [a_draft1, a_draft2]
 
         #add tags
@@ -80,10 +87,14 @@ class Blogging_Feature_Test(unittest.TestCase):
         db.session.commit()
 
         #test articles given tag
-        blog_Tag1 = db.session.scalars(t1.tagged_submiited_articles_select().order_by(Article.timestamp.desc())).all()
-        blog_Tag2 = db.session.scalars(t2.tagged_submiited_articles_select().order_by(Article.timestamp.desc())).all()
-        blog_Tag3 = db.session.scalars(t3.tagged_submiited_articles_select().order_by(Article.timestamp.desc())).all()
-        blog_Tag4 = db.session.scalars(t4.tagged_submiited_articles_select().order_by(Article.timestamp.desc())).all()
+        blog_Tag1 = db.session.scalars(t1.tagged_submiited_articles_select().order_by(
+            Article.timestamp.desc())).all()
+        blog_Tag2 = db.session.scalars(t2.tagged_submiited_articles_select().order_by(
+            Article.timestamp.desc())).all()
+        blog_Tag3 = db.session.scalars(t3.tagged_submiited_articles_select().order_by(
+            Article.timestamp.desc())).all()
+        blog_Tag4 = db.session.scalars(t4.tagged_submiited_articles_select().order_by(
+            Article.timestamp.desc())).all()
 
         assert blog_Tag1 == [a3, a1, a2]
         assert blog_Tag2 == [a1, a2]
@@ -102,18 +113,31 @@ class Blogging_Feature_Test(unittest.TestCase):
         assert t4.count_articles() == 1
         assert unused_tag.count_articles() == 0
 
-        #delete tags from articles
+        #untag from articles
         a2.untag(t1)
         db.session.commit()
         assert t1.count_articles() == 2
-        blog_Tag1 = db.session.scalars(t1.articles.select().order_by(Article.timestamp.desc())).all()
+        blog_Tag1 = db.session.scalars(t1.articles.select().order_by(
+            Article.timestamp.desc())).all()
         assert blog_Tag1 == [a3, a1]
 
         #delete tags altogether (when a tag is deleted, the relationship has to be gone too)
+        a1_count_tags = db.session.scalar(sa.select(sa.func.count()).select_from(
+            a1.tags.select().subquery()))
+        a2_count_tags = db.session.scalar(sa.select(sa.func.count()).select_from(
+            a2.tags.select().subquery()))
+        assert a1_count_tags == 2
+        assert a2_count_tags == 2
+
         t2.delete()
         db.session.commit()
-        a1_count_tags = db.session.scalar(sa.select(sa.func.count()).select_from(a1.tags.select().subquery()))
-        a2_count_tags = db.session.scalar(sa.select(sa.func.count()).select_from(a2.tags.select().subquery()))
+        a1_count_tags = db.session.scalar(sa.select(sa.func.count()).select_from(
+            a1.tags.select().subquery()))
+        a2_count_tags = db.session.scalar(sa.select(sa.func.count()).select_from(
+            a2.tags.select().subquery()))
+        
+        assert a1_count_tags == 1
+        assert a2_count_tags == 1
 
         #test article deletion removes tags with no more articles
         a4_id = a4.id
@@ -124,9 +148,9 @@ class Blogging_Feature_Test(unittest.TestCase):
         
         assert countT4 == 0
 
-        assert a1_count_tags == 1
-        assert a2_count_tags == 1
-    
+        all_tags = db.session.scalars(Tag.fetch_all_tags().order_by(Tag.name.asc())).all()
+        assert all_tags == [t1, t3]
+
     def test_comments(self):
         #Add users
         u1 = User(username="Summer", email="summer@c137.com", isVerified=1)
@@ -138,32 +162,48 @@ class Blogging_Feature_Test(unittest.TestCase):
 
         #Add articles
         now = datetime.utcnow()
-        a1 = Article(title="article 1", body="Article 1 Body", timestamp=now+timedelta(seconds=2), user_id=1, isSubmitted=True)
-        a2 = Article(title="article 2", body="Article 2 Body", timestamp=now+timedelta(seconds=1), user_id=1, isSubmitted=True)
-        a3 = Article(title="article 3", body="Article 3 Body", timestamp=now+timedelta(seconds=4), user_id=1, isSubmitted=True)
-        a4 = Article(title="article 4", body="Article 4 Body", timestamp=now+timedelta(seconds=3), user_id=1, isSubmitted=True)
+        a1 = Article(title="article 1", body="Article 1 Body", 
+                     timestamp=now+timedelta(seconds=2), user_id=1, 
+                     isSubmitted=True)
+        a2 = Article(title="article 2", body="Article 2 Body", 
+                     timestamp=now+timedelta(seconds=1), user_id=1, 
+                     isSubmitted=True)
+        a3 = Article(title="article 3", body="Article 3 Body", 
+                     timestamp=now+timedelta(seconds=4), user_id=1, 
+                     isSubmitted=True)
+        a4 = Article(title="article 4", body="Article 4 Body", 
+                     timestamp=now+timedelta(seconds=3), user_id=1, 
+                     isSubmitted=True)
         db.session.add_all([a1,a2,a3,a4])
         db.session.commit()
 
         #test comment submission
         #article 1 comments
-        a1c1 = Comment(comment="article1 comment1", user_id=2, article_id=1, timestamp = now+timedelta(seconds=3), isApproved=True)
-        a1c2 = Comment(comment="article1 comment2", user_id=1, article_id=1, timestamp = now+timedelta(seconds=2), isApproved=True)
-        a1c3 = Comment(comment="article1 comment3", user_id=2, article_id=1, timestamp = now+timedelta(seconds=1), isApproved=True)
+        a1c1 = Comment(comment="article1 comment1", user_id=2, article_id=1, 
+                       timestamp = now+timedelta(seconds=3), isApproved=True)
+        a1c2 = Comment(comment="article1 comment2", user_id=1, article_id=1, 
+                       timestamp = now+timedelta(seconds=2), isApproved=True)
+        a1c3 = Comment(comment="article1 comment3", user_id=2, article_id=1, 
+                       timestamp = now+timedelta(seconds=1), isApproved=True)
 
         #article 2 comments
-        a2c1 = Comment(comment="article2 comment1", user_id=2, article_id=2, timestamp = now+timedelta(seconds=1),isApproved=True)
+        a2c1 = Comment(comment="article2 comment1", user_id=2, article_id=2, 
+                       timestamp = now+timedelta(seconds=1),isApproved=True)
         #to test pending comments don't show up
-        a2c2 = Comment(comment="article2 comment2", user_id=2, article_id=2, timestamp = now+timedelta(seconds=2),isApproved=False)
+        a2c2 = Comment(comment="article2 comment2", name="NoAcct", email="noAccount@example.com", 
+                       article_id=2, timestamp = now+timedelta(seconds=2))
 
         #article 3 comments
-        a3c1 = Comment(comment="article3 comment1", user_id=3, article_id=3, isApproved=True)
+        a3c1 = Comment(comment="article3 comment1", user_id=3, article_id=3,  
+                       timestamp = now+timedelta(seconds=2), isApproved=True)
 
         #article 4 comments
-        a4c1 = Comment(comment="article4 comment1", user_id=4, article_id=4, isApproved=True)
-        a4c2 = Comment(comment="article4 comment2", user_id=1, article_id=4, isApproved=True)
+        a4c1 = Comment(comment="article4 comment1", user_id=4, article_id=4, timestamp = now+timedelta(seconds=1),
+                       isApproved=True)
+        a4c2 = Comment(comment="article4 comment2", user_id=1, article_id=4, timestamp = now+timedelta(seconds=2),
+                       isApproved=True)
 
-        db.session.add_all([a1c1, a1c2, a1c3, a2c1, a3c1, a4c1, a4c2])
+        db.session.add_all([a1c1, a1c2, a1c3, a2c1, a2c2, a3c1, a4c1, a4c2])
         db.session.commit()
 
         #testing comment submissions    
@@ -178,8 +218,18 @@ class Blogging_Feature_Test(unittest.TestCase):
         assert count_a4_comments == 2
 
         #check that the oldest comment is displayed first
-        a1_comments = db.session.scalars(a1.fetch_approved_comments().order_by(Comment.timestamp.asc())).all()
+        a1_comments = db.session.scalars(a1.fetch_approved_comments().order_by(
+            Comment.timestamp.asc())).all()
+        a2_comments = db.session.scalars(a2.fetch_approved_comments().order_by(
+            Comment.timestamp.asc())).all()
+        a3_comments = db.session.scalars(a3.fetch_approved_comments().order_by(
+            Comment.timestamp.asc())).all()
+        a4_comments = db.session.scalars(a4.fetch_approved_comments().order_by(
+            Comment.timestamp.asc())).all()
         assert a1_comments == [a1c3,a1c2,a1c1]
+        assert a2_comments == [a2c1]
+        assert a3_comments == [a3c1]
+        assert a4_comments == [a4c1,a4c2]
 
         #checking user comments
         u1_comments_count = db.session.scalar(sa.select(sa.func.count()).select_from(
@@ -187,25 +237,45 @@ class Blogging_Feature_Test(unittest.TestCase):
         
         assert u1_comments_count == 2
         
-        #to test pending comments don't show up
+        #test approving comments
         now = datetime.utcnow()
-        a1c4 = Comment(comment="article1 comment4", user_id=2, article_id=1, timestamp = now+timedelta(seconds=1), isApproved=False)
-        a2c2 = Comment(comment="article2 comment2", user_id=2, article_id=2, timestamp = now+timedelta(seconds=2), isApproved=False)
-        db.session.add_all([a1c4, a2c2])
+        a1c4 = Comment(comment="article1 comment4", name="NoAcct", email="noAccount@example.com", article_id=1, 
+                       timestamp = now+timedelta(seconds=1))
+        db.session.add(a1c4)
         db.session.commit()
 
+        #fetch pending comments
+        pending_comments = db.session.scalars(
+            Comment.fetch_pending_approval_comments().order_by(
+            Comment.timestamp.asc())).all()
+        assert pending_comments == [a1c4, a2c2]
+
+        #first create a baseline for the number of comments
         count_a1_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
-          a1.fetch_approved_comments().subquery()))
+          a1.fetch_approved_comments().subquery())) 
         count_a2_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
           a2.fetch_approved_comments().subquery()))
         assert count_a1_comments == 3
+        assert count_a2_comments == 1
+
+        a1c4.approve()
+        db.session.commit()
+        count_a1_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
+          a1.fetch_approved_comments().subquery()))
+        assert count_a1_comments == 4
+
+        #a2c2 from above
+        a2c2.deny()
+        db.session.commit()
+        count_a2_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
+          a2.fetch_approved_comments().subquery()))
         assert count_a2_comments == 1
 
         #test comment deletion
         a1c3.delete()
         count_a1_comments = db.session.scalar(sa.select(sa.func.count()).select_from(
           a1.fetch_approved_comments().subquery()))
-        assert count_a1_comments == 2
+        assert count_a1_comments == 3
         
         #article deletion results in comment deletion
         a4_id = a4.id
@@ -216,9 +286,7 @@ class Blogging_Feature_Test(unittest.TestCase):
 
         assert count_a4_comments == 0
 
-        #fetch pending comments
-        pending_comments = db.session.scalars(Comment.fetch_pending_approval_comments().order_by(Comment.timestamp.asc())).all()
-        assert pending_comments == [a1c4, a2c2]
+        
         
 
 class UserModelCase(unittest.TestCase):

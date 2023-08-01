@@ -7,7 +7,7 @@ from flask_login import current_user, login_required
 import sqlalchemy as sa
 from flask_babel import _
 from app.main.forms import EmptyForm
-
+from app.blog.routes import get_articles_with_tags_series
 
 @bp.route('/about', methods=['GET','POST'])
 def about():
@@ -82,7 +82,10 @@ def admin():
     pendingComments = db.session.scalars(Comment.fetch_pending_approval_comments()).all()
     draftArticles = db.session.scalars(Article.fetch_draft().order_by(Article.timestamp.desc())).all()
     emptyForm = EmptyForm()
-    return render_template('admin.html', title=_('Admin'), emptyForm=emptyForm, pendingComments=pendingComments, draftArticles=draftArticles)
+    articles_with_tags, series_with_articles = get_articles_with_tags_series()
+    return render_template('admin.html', title=_('Admin'), emptyForm=emptyForm, articles_with_tags=articles_with_tags, 
+                           series_with_articles=series_with_articles, 
+                           pendingComments=pendingComments, draftArticles=draftArticles)
 
 @bp.route('/approve/<c_id>', methods=['POST'])
 def approve(c_id):

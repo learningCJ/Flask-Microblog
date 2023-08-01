@@ -12,8 +12,8 @@ from config import Config
 from elasticsearch import Elasticsearch
 import textile
 from flask_ckeditor import CKEditor
-from flask_session_captcha import FlaskSessionCaptcha
-from flask_sessionstore import Session
+
+from flask_caching import Cache
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -24,6 +24,7 @@ mail = Mail()
 moment = Moment()
 babel = Babel()
 ckeditor = CKEditor()
+cache = Cache()
 #captcha = FlaskSessionCaptcha()
 
 def textile_filter(text):
@@ -45,6 +46,7 @@ def create_app(config_class=Config):
     moment.init_app(app)
     babel.init_app(app)
     ckeditor.init_app(app)
+    cache.init_app(app)
     #app.config['SESSION_SQLALCHEMY'] = db
     #Session(app)
     #captcha.init_app(app)

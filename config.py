@@ -38,4 +38,4 @@ class Config(object):
     CKEDITOR_CODE_THEME = 'tomorrow'
     #CKEDITOR_FILE_UPLOADER = 'upload'
 
-    SESSION_TYPE = 'sqlalchemy'
+    CACHE_TYPE = 'flask_caching.backends.SimpleCache'
