@@ -50,7 +50,7 @@ def get_articles_with_tags_series():
 
     for article in articles:
         for tag in db.session.scalars(article.tags.select()).all():
-            if article not in articles_with_tags:
+            if article.id not in articles_with_tags:
                 articles_with_tags[article.id] = [tag.name.strip()]
             else:
                 articles_with_tags[article.id].append(tag.name.strip())
