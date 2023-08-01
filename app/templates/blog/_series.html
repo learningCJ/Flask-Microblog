@@ -1,7 +1,9 @@
 <h2>{{ article.series }} Series:</h2>
+<ul>
 {% for a in series_with_articles[article.series] %}
 <div id="seriesLink">
-    <a href="{{ url_for('blog.article', id=a.id ) }}">{{ a.title }}</a>
+    <li><a href="{{ url_for('blog.article', id=a.id ) }}">{{ a.title }}</a></li>
 </div>
 {% endfor %}
+</ul>
 <br>
