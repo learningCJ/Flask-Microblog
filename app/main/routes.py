@@ -126,7 +126,6 @@ def deny(c_id):
     
 @bp.route('/toggle-dark-mode', methods=['POST'])
 def enable_dark_mode():
-    print(session['dark_mode'])
     session['dark_mode'] = not session['dark_mode']
     return jsonify({'dark-mode': session['dark_mode'], 'status':'success'})
 
