@@ -124,7 +124,7 @@ def deny(c_id):
         flash('Comment has been deleted')
         return redirect(url_for('main.admin'))
     
-@bp.route('/toggle-dark-mode', methods=['POST'])
+@bp.route('/toggle-dark-mode', methods=['GET','POST'])
 def enable_dark_mode():
     session['dark_mode'] = not session['dark_mode']
     return jsonify({'dark-mode': session['dark_mode'], 'status':'success'})
