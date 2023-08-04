@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<script type="text/javascript" src="{{ url_for('static', filename='javascript/auth.js') }}"></script>
     <h1>{{ _('Sign In') }}</h1>
 
     <form action="" method="post" novalidate>

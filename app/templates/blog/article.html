@@ -12,12 +12,12 @@
         {% include "blog/_series.html" %}
         {% endif %}
         {{ ckeditor.load_code_theme() }}
-        <div class="articleBody text-break post-span">{{ article.body|safe }}</div>
+        <div class="articleBody text-break">{{ article.body|safe }}</div>
         <br>
         <hr>
         <br>
         <div class="commentSection">
-            <h1 id="comments">{{ _('Comments') }}</h1>
+            <h1>{{ _('Comments') }}</h1>
             <br>
             <!--Comment Submission Form-->
             <form action="" method="post">

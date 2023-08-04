@@ -4,7 +4,7 @@ from app.main.forms import EmptyForm
 from app.shared_functions import text_linkification, anonymous_avatar
 from app import db, cache
 from flask_login import current_user
-from flask import flash, redirect, url_for, render_template, request, current_app, g
+from flask import flash, redirect, url_for, render_template, request, current_app, g, session
 from flask_babel import _
 from app.models import Article, Tag, Comment
 import sqlalchemy as sa
@@ -62,6 +62,7 @@ def get_articles_with_tags_series():
 @bp.route('/', methods=['GET','POST'])
 @bp.route('/index', methods=['GET','POST'])
 def index():
+    
     emptyForm = EmptyForm()
     page = request.args.get('page', default=1, type=int)
     articles = db.paginate(Article.fetch_submitted().order_by(Article.timestamp.desc()),

@@ -47,6 +47,10 @@ def create_app(config_class=Config):
     babel.init_app(app)
     ckeditor.init_app(app)
     cache.init_app(app)
+
+    app.config['SESSION_DEFAULTS'] = {
+        'dark_mode': True,
+    }
     #app.config['SESSION_SQLALCHEMY'] = db
     #Session(app)
     #captcha.init_app(app)
@@ -64,7 +68,7 @@ def create_app(config_class=Config):
     app.register_blueprint(api_bp, url_prefix='/api')
 
     from app.blog import bp as blog_bp
-    app.register_blueprint(blog_bp)
+    app.register_blueprint(blog_bp, url_prefix='/blog')
 
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)

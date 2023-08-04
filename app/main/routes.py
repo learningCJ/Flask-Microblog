@@ -2,7 +2,7 @@ from app.main import bp
 from app.main.forms import AboutSiteForm, EditProfileForm
 from app.models import TechStack, User, Post, Comment, Article
 from app import db
-from flask import render_template, flash,redirect, url_for,current_app, request
+from flask import render_template, flash,redirect, url_for,current_app, request, session, jsonify
 from flask_login import current_user, login_required
 import sqlalchemy as sa
 from flask_babel import _
@@ -10,9 +10,15 @@ from app.main.forms import EmptyForm
 from app.blog.routes import get_articles_with_tags_series
 from app.shared_functions import anonymous_avatar
 
+
 @bp.before_request
 def before_request():
     current_app.jinja_env.globals.update(anonymous_avatar=anonymous_avatar)
+    
+@bp.route('/', methods=['GET','POST'])
+@bp.route('/index', methods=['GET','POST'])
+def index():
+    return redirect(url_for('blog.index'))
 
 @bp.route('/about', methods=['GET','POST'])
 def about():
@@ -117,3 +123,14 @@ def deny(c_id):
         db.session.commit()
         flash('Comment has been deleted')
         return redirect(url_for('main.admin'))
+    
+@bp.route('/toggle-dark-mode', methods=['POST'])
+def enable_dark_mode():
+    print(session['dark_mode'])
+    session['dark_mode'] = not session['dark_mode']
+    return jsonify({'dark-mode': session['dark_mode'], 'status':'success'})
+
+@bp.route('/get-session-data', methods=['GET'])
+def get_session_darkmode():
+    dark_mode = session.get('dark-mode', False)
+    return jsonify({'dark-mode': dark_mode})

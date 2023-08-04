@@ -27,8 +27,9 @@
                     $(destElem).text("{{ _('Error: Could not contact server.') }}");
                 });
             }
+            
         </script>
-   
+        <script type="text/javascript" src="{{ url_for('static', filename='javascript/dark-mode.js') }}"></script>
         <link href="{{ url_for('static',filename='styles/mystyle.css') }}" rel="stylesheet">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,7 +46,7 @@
         {% include "_nav.html" %}
         <br>
         <!--main container-->
-        <main class="container-fluid p-4">
+        <main class="container-fluid p-4 contentContainer">
             <section class="content-section">
             {% with messages = get_flashed_messages() %}
                 {% if messages %}

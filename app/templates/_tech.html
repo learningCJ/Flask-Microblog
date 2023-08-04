@@ -5,9 +5,9 @@
     <td valign="top" id="techNameCol">
         {{ tech.techName }}
     </td>
-    {% if admin %}
+    {% if current_user.admin %}
     <td>
-        <div class="deleteFollowUnfollow"> 
+        <div> 
             <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ tech.id }}">
                 {{ _('Delete') }}
                 </button>

@@ -36,6 +36,14 @@ class Config(object):
     CKEDITOR_HEIGHT = 700
     CKEDITOR_ENABLE_CODESNIPPET = True
     CKEDITOR_CODE_THEME = 'tomorrow'
+    CKEDITOR_CONTENT_CSS = 'static/styles/mystle.css'
     #CKEDITOR_FILE_UPLOADER = 'upload'
 
     CACHE_TYPE = 'flask_caching.backends.SimpleCache'
+
+    SESSION_COOKIE_SECURE = True  # Use HTTPS only
+    SESSION_COOKIE_HTTPONLY = True  # Prevent client-side JavaScript access
+    SESSION_COOKIE_SAMESITE = 'Lax'  # Set SameSite attribute for CSRF protection
+    SESSION_DEFAULTS = {
+        'dark_mode': True
+    }
