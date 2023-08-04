@@ -1,8 +1,8 @@
 :root {
     /*background/border colours*/
-    --navbar-color:#466163;
-    --dropdown-color: #384647;
-    --bs-card-header-color: #384647;
+    --navbar-color:#9DA9A9;/*E0F2F1*/
+    --dropdown-color: #E0F2F1;
+    --bs-card-header-color: #9DA9A9;
     --background-color: #ffffff;
     --text-area-color:#ffffff;
     --hover-color:#a0a0a0;
@@ -17,7 +17,8 @@
     --text-secondary-color:#343a40;
     --text-tertiary-color:#6c757d;
     --link-color: grey;
-    --navbar-text-color: #a0a0a0;
+    --navbar-text-color: #181818;
+    --text-dark-color:#181818;
     --text-light-color:#a0a0a0;
 
     /*layout*/
@@ -32,7 +33,7 @@
     --navbar-outline-color:#a0a0a0;
     --background-color: #181818;
     --dropdown-color: #394547;
-    --bs-card-header-color:#384647;
+    --bs-card-header-color:#9DA9A9;
     --bs-card-body-color: #333;
     --text-area-color: #222222;
     --text-area-focus-color: #333;
@@ -160,7 +161,10 @@ input.form-control:focus, textarea.form-control:focus{
 }
 
 .nav-link, .navbar-brand{
-    color:var(--text-light-color);
+    color:var(--navbar-text-color);
+}
+.nav-link:focus, .nav-link:hover{
+    color:var(--hover-color);
 }
 
 .navbar-nav .nav-link.active, .navbar-nav .nav-link.show{
@@ -311,7 +315,7 @@ color: var(--hover-color);
 
 .card-header, .alert{
     background-color: var(--bs-card-header-color);
-    color:var(--text-light-color);
+    color:var(--text-dark-color)
 }
 
 #sidebar .card {
@@ -325,6 +329,10 @@ color: var(--hover-color);
 
 .articleInfo{
     margin-bottom: 2rem;
+}
+
+.navIcons{
+    opacity: 100%;
 }
 
 /*Images embedded in the blog posts*/
