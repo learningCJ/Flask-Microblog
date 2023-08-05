@@ -191,12 +191,30 @@ input.form-control:focus, textarea.form-control:focus{
         padding-right: 15px;
     }  
 }
-
-
-
 /*End of NavBar*/
 /*End of Global*/
 
+/*Shared Styles*/
+.follow-unfollow{
+    background-color: transparent;
+    text-decoration: underline;
+    border: none;
+    color: blue;
+    cursor: pointer;
+}
+follow-unfollow:focus{
+    outline: none;
+}
+
+.microblogPost, .articleBody, .comments {
+    margin-bottom: 0.3rem;
+}
+
+.postAvatar, .commentAvatar{
+    min-width: 36px;
+}
+
+/*End of Shared Styles*/
 
 /*Microblog Related*/
 .postTable{
@@ -289,29 +307,10 @@ section.resume-section .resume-section-content {
 /*End of resume*/
 /*End of About*/
 
-/*Shared Styles*/
-.follow-unfollow{
-    background-color: transparent;
-    text-decoration: underline;
-    border: none;
-    color: blue;
-    cursor: pointer;
-}
-follow-unfollow:focus{
-    outline: none;
-}
-
-.microblogPost, .articleBody, .comments {
-    margin-bottom: 0.3rem;
-}
-
-.postAvatar, .commentAvatar{
-    min-width: 36px;
-}
-
-/*End of Shared Styles*/
-
 /*Blog*/
+.articleBody div[style="background:#eeeeee;border:1px solid #cccccc;padding:5px 10px;"] {
+    background-color: var(--text-area-color) !important;
+}
 .articleTitle a {
 color: var(--link-color);
 text-decoration: none;
@@ -349,6 +348,9 @@ color: var(--hover-color);
 .navIcons{
     opacity: 100%;
 }
+
+
+
 
 /*Images embedded in the blog posts*/
 img:not(.navIcons, .avatarImg)  {

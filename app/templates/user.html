@@ -17,14 +17,14 @@
             <p><a href="{{ url_for('main.edit_profile') }}">{{ _('Edit your profile') }}</a></p>
             {% elif not current_user.is_following(user) %}
             <p>
-                <form action="{{ url_for('microblog.follow', username=user.username) }}" method="post">
+                <form action="{{ url_for('main.follow', username=user.username) }}" method="post">
                     {{ form.hidden_tag() }}
                     {{ form.submit(value=_("Follow"), class="btn btn-outline-primary") }}
                 </form>
             </p>
             {% elif current_user.is_following(user) %}
             <p>
-                <form action="{{ url_for('microblog.unfollow', username=user.username) }}" method="post">
+                <form action="{{ url_for('main.unfollow', username=user.username) }}" method="post">
                     {{ form.hidden_tag() }}
                     {{ form.submit(class="btn btn-outline-primary", value=_("Unfollow")) }}
                 </form>

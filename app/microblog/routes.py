@@ -50,47 +50,6 @@ def index():
         if posts.has_prev else None
     return render_template('microblog/index.html', title=_('Home'),  posts = posts, form = form, next_url=next_url, prev_url=prev_url)
 
-
-
-@bp.route('/follow/<username>', methods=['Post'])
-@login_required
-def follow(username):
-    form = EmptyForm()
-    if form.validate_on_submit():
-        user = db.session.scalar(sa.select(User).filter_by(username=username))
-        if user is None:
-            flash(_('User %(username)s not found', username=username))
-            return redirect(url_for('microblog.index'))
-        if current_user == user:
-            flash(_('You cannot follow yourself'))
-            return redirect(url_for('microblog.user', username=user.username))
-        current_user.follow(user)
-        db.session.commit()
-        flash(_('You have successfully followed %(username)s', username=username))
-        return redirect(request.referrer)
-    else:
-        return redirect(url_for('microblog.index'))
-    
-@bp.route('/unfollow/<username>', methods=["POST"])
-@login_required
-def unfollow(username):
-    form = EmptyForm()
-    if form.validate_on_submit():
-        user = db.session.scalar(sa.select(User).filter_by(username=username))
-        if user is None:
-            flash('User {} could not be found'.format(username))
-            return redirect(url_for('microblog.index'))
-        if current_user == user:
-            flash(_('You cannot unfollow yourself'))
-            return redirect(url_for('microblog.index'))
-        current_user.unfollow(user)
-        db.session.commit()
-        flash(_('You have unfollowed %(username)s successfully', username=username))
-        return redirect(request.referrer)
-    else:
-        return redirect(url_for('microblog.index'))
-    
-
 @bp.route('/explore')
 def explore():
     form = EmptyForm()

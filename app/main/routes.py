@@ -135,3 +135,41 @@ def enable_dark_mode():
 def get_session_darkmode():
     dark_mode = session.get('dark-mode', False)
     return jsonify({'dark-mode': dark_mode})
+
+@bp.route('/follow/<username>', methods=['Post'])
+@login_required
+def follow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = db.session.scalar(sa.select(User).filter_by(username=username))
+        if user is None:
+            flash(_('User %(username)s not found', username=username))
+            return redirect(url_for('microblog.index'))
+        if current_user == user:
+            flash(_('You cannot follow yourself'))
+            return redirect(url_for('microblog.user', username=user.username))
+        current_user.follow(user)
+        db.session.commit()
+        flash(_('You have successfully followed %(username)s', username=username))
+        return redirect(request.referrer)
+    else:
+        return redirect(url_for('microblog.index'))
+    
+@bp.route('/unfollow/<username>', methods=["POST"])
+@login_required
+def unfollow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = db.session.scalar(sa.select(User).filter_by(username=username))
+        if user is None:
+            flash('User {} could not be found'.format(username))
+            return redirect(url_for('microblog.index'))
+        if current_user == user:
+            flash(_('You cannot unfollow yourself'))
+            return redirect(url_for('microblog.index'))
+        current_user.unfollow(user)
+        db.session.commit()
+        flash(_('You have unfollowed %(username)s successfully', username=username))
+        return redirect(request.referrer)
+    else:
+        return redirect(url_for('microblog.index'))

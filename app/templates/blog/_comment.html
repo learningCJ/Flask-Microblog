@@ -36,13 +36,13 @@
                 <li><a class="dropdown-item" href="#deleteCommentModal{{ comment.id }}" data-bs-toggle="modal">{{ _('Delete') }}</a></li>
                 {% elif comment.commenter and current_user.is_authenticated and current_user.is_following(comment.commenter) %}
                 <form action="{{ url_for('main.unfollow', username=comment.commenter.username) }}" method="post">
-                    {{ form.hidden_tag() }}
-                    {{ form.submit(value=_("Unfollow " + comment.commenter.username), class="dropdown-item") }}
+                    {{ emptyForm.hidden_tag() }}
+                    {{ emptyForm.submit(value=_("Unfollow " + comment.commenter.username), class="dropdown-item") }}
                 </form>
                 {% elif comment.commenter and current_user.is_authenticated and not current_user.is_following(comment.commenter) and not comment.commenter.isTempAccount%}
                 <form action="{{ url_for('main.follow', username=comment.commenter.username) }}" method="post">
-                    {{ form.hidden_tag() }}
-                    {{ form.submit(value=_("Follow " + comment.commenter.username), class="dropdown-item") }}
+                    {{ emptyForm.hidden_tag() }}
+                    {{ emptyForm.submit(value=_("Follow " + comment.commenter.username), class="dropdown-item") }}
                 </form>
                 {% endif %}
             </ul>

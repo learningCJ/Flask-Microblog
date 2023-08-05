@@ -36,12 +36,12 @@
                     {% if current_user == post.author %}
                     <li><a class="dropdown-item" href="#deleteModal{{ post.id }}" data-bs-toggle="modal">{{ _('Delete') }}</a></li>
                     {% elif current_user.is_authenticated and current_user.is_following(post.author) %}
-                    <form action="{{ url_for('microblog.unfollow', username=post.author.username) }}" method="post">
+                    <form action="{{ url_for('main.unfollow', username=post.author.username) }}" method="post">
                         {{ form.hidden_tag() }}
                         {{ form.submit(value=_("Unfollow " + post.author.username), class="dropdown-item") }}
                     </form>
                     {% elif current_user.is_authenticated and not current_user.is_following(post.author) %}
-                    <form action="{{ url_for('microblog.follow', username=post.author.username) }}" method="post">
+                    <form action="{{ url_for('main.follow', username=post.author.username) }}" method="post">
                         {{ form.hidden_tag() }}
                         {{ form.submit(value=_("Follow " + post.author.username), class="dropdown-item") }}
                     </form>
