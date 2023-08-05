@@ -346,13 +346,14 @@ img:not(.navIcons, .avatarImg)  {
 }
 
 pre{
-    width: 90%;
-    margin-left: auto;
+    margin-left: 0;
     margin-right: auto; 
 }
 
-pre code{
+pre code, .hljs.python {
     overflow-x: auto;
+    background:none;
+    background-color: var(--text-area-color);
 }
 
 /*Draft badge from admin*/
