@@ -3,7 +3,7 @@
 {% block content %}
 <div class="row">
     <div class="col-md-9">
-    {% if current_user.isAdmin() %}
+    {% if current_user.admin %}
     <div class="d-flex justify-content-end">
         <a class="btn btn-outline-primary" href="{{ url_for('blog.add') }}">Post Article</a>
     </div>
