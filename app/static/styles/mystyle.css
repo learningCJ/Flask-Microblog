@@ -350,7 +350,7 @@ pre{
     margin-right: auto; 
 }
 
-pre code, .hljs.python {
+pre code, .hljs {
     overflow-x: auto;
     background:none;
     background-color: var(--text-area-color);
