@@ -286,7 +286,7 @@ follow-unfollow:focus{
     outline: none;
 }
 
-.microblogPost, .articleBody, .comment {
+.microblogPost, .articleBody, .comments {
     margin-bottom: 0.3rem;
 }
 
