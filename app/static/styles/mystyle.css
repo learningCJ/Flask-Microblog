@@ -5,8 +5,6 @@
     --bs-card-header-color: #9DA9A9;
     --background-color: #ffffff;
     --text-area-color:#ffffff;
-    --hover-color:#a0a0a0;
-    --navbar-hover-color:#f2f2f2;
     --btn-outline-color: #007BFF;
     --btn-hover-color: #007BFF;
 
@@ -19,7 +17,9 @@
     --link-color: grey;
     --navbar-text-color: #181818;
     --text-dark-color:#181818;
-    --text-light-color:#a0a0a0;
+    --text-light-color:#5e5e5e;
+    --navbar-hover-color:#112872a6;
+    --hover-color:#112872a6;
 
     /*layout*/
     --bs-card-spacer-y: 1rem;
@@ -54,6 +54,8 @@
     --hover-color: #FFFFFF;
     --disabled-text: #808080;
     --bs-navbar-active-color:#ffffff;
+    --navbar-hover-color:#112872a6;
+    --hover-color:#112872a6;
 }   
 
 /*Global Styles*/
@@ -163,21 +165,34 @@ input.form-control:focus, textarea.form-control:focus{
 .nav-link, .navbar-brand{
     color:var(--navbar-text-color);
 }
-.nav-link:focus, .nav-link:hover{
-    color:var(--hover-color);
+
+.navbar-brand{
+    padding-top: 0;
 }
 
-.navbar-nav .nav-link.active, .navbar-nav .nav-link.show{
-    color: var(--bs-navbar-hover-color);
+.navbar-nav.nav-link.active, .navbar-nav .nav-link.show .nav-link:hover .nav-link:focus{
+    color: var(--navbar-hover-color);
 }
 
 #searchBox{
     padding-right: 1rem;
 }
 
-i{
-    padding-right:10px;
+@media (max-width: 768px) {
+    .navbar-collapse.collapse .nav-item.dropdown:has(.bi) {
+        padding-top: 10px;
+        padding-bottom: 20px;
+    }  
 }
+
+@media (min-width: 768.01px) {
+    .navbar-collapse.collapse .nav-item.dropdown:has(.bi) {
+        padding-left: 15px;
+        padding-right: 15px;
+    }  
+}
+
+
 
 /*End of NavBar*/
 /*End of Global*/
@@ -350,10 +365,11 @@ pre{
     margin-right: auto; 
 }
 
-pre code, .hljs {
+pre code, .hljs.python, .language-python.hljs {
     overflow-x: auto;
     background:none;
     background-color: var(--text-area-color);
+    color:var(--text-light-color)
 }
 
 /*Draft badge from admin*/
