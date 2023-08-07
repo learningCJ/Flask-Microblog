@@ -13,6 +13,7 @@ from datetime import datetime
 @bp.before_request
 def before_request():
     g.all_tags = get_all_tags()
+    current_app.jinja_env.globals.update(anonymous_avatar=anonymous_avatar)
 
 def tag_article(article, strTags):
     for tag in strTags:

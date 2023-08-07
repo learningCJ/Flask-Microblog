@@ -8,13 +8,7 @@ import sqlalchemy as sa
 from flask_babel import _
 from app.main.forms import EmptyForm
 from app.blog.routes import get_articles_with_tags_series
-from app.shared_functions import anonymous_avatar
-
-
-@bp.before_request
-def before_request():
-    current_app.jinja_env.globals.update(anonymous_avatar=anonymous_avatar)
-    
+  
 @bp.route('/', methods=['GET','POST'])
 @bp.route('/index', methods=['GET','POST'])
 def index():
