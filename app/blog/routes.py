@@ -199,6 +199,9 @@ def edit(id):
 
 @bp.route('/delete/<id>', methods=['GET', 'POST'])
 def delete(id):
+    if current_user.is_anonymous or not current_user.isAdmin():
+        flash(_('Insufficient Prvilege'))
+        return redirect(url_for(request.referrer))
     form = EmptyForm()
     if form.validate_on_submit():
         article = db.session.get(Article,id)
