@@ -379,6 +379,7 @@ class Comment(db.Model):
     article: so.Mapped['Article'] = so.relationship(back_populates='comments')
     timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=datetime.utcnow)
     isApproved: so.Mapped[bool] = so.mapped_column(default=False)
+    reports: so.WriteOnlyMapped['Report'] = so.relationship(back_populates='comment', passive_deletes=True)
 
     def delete(self):
         db.session.execute(sa.delete(Comment).where(Comment.id == self.id))
@@ -411,3 +412,19 @@ class TechStack(db.Model):
     
     def delete(self):
         db.session.execute(sa.delete(TechStack).where(TechStack.id == self.id))
+
+class Report(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    comment_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Comment.id),index=True)
+    comment: so.Mapped['Comment'] = so.relationship(back_populates="reports")
+    report_reason: so.Mapped[str] = so.mapped_column(sa.String(255))
+    status: so.Mapped[str] = so.mapped_column(sa.String(10))
+
+    def __repr__(self):
+        return f'<Report: {self.comment} - {self.report_reason}'
+    
+    def dismiss_report(self):
+        self.status = "Dismissed"
+
+    def approve_report(self):
+        self.status = "Confirm"

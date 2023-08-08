@@ -51,7 +51,6 @@ $(document).ready(function() {
 });
 
 function toggleDarkMode() {
-    console.log("Clicked")
     getDarkModeSetting().then(function(darkMode){
         $.ajax({
             type: 'POST',
