@@ -25,7 +25,6 @@ moment = Moment()
 babel = Babel()
 ckeditor = CKEditor()
 cache = Cache()
-#captcha = FlaskSessionCaptcha()
 
 def textile_filter(text):
      return textile.textile(text)

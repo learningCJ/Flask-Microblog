@@ -24,8 +24,7 @@ def about():
         flash(_('Changes made successfully!'))
         return redirect(url_for('main.about'))
     techs = db.session.scalars(sa.select(TechStack))
-    admin = current_user.is_authenticated and current_user.email == current_app.config['ADMIN']
-    return render_template('about.html', title=_('About'), form=form, techs=list(techs), admin=admin)
+    return render_template('about.html', title=_('About'), form=form, techs=list(techs))
 
 @bp.route('/resume', methods=['GET'])
 def resume():
@@ -81,7 +80,7 @@ def edit_profile():
 
 @bp.route('/admin', methods=['GET','POST'])
 def admin():
-    if current_user.is_anonymous or not current_user.isAdmin():
+    if current_user.is_anonymous or not current_user.admin:
         flash(_('Insufficient Prvilege'))
         return redirect(url_for('blog.index'))
     pendingComments = db.session.scalars(Comment.fetch_pending_approval_comments()).all()

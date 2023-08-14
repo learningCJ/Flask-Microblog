@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
     <!--admin tool to add more tech-->
-    {% if admin %}
+    {% if current_user.is_authenticated and current_user.admin %}
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <div class="form-floating mb-3">

@@ -81,7 +81,7 @@ def index():
 
 @bp.route('/add', methods=['GET','POST'])
 def add():
-    if current_user.is_anonymous or not current_user.isAdmin():
+    if current_user.is_anonymous or not current_user.admin:
         flash(_('Insufficient Prvilege'))
         return redirect(url_for('blog.index'))
     form = BlogPostForm()
@@ -145,7 +145,7 @@ def article(id):
 
 @bp.route('/edit/<id>', methods=['GET', 'POST'])
 def edit(id):
-    if current_user.is_anonymous or not current_user.isAdmin():
+    if current_user.is_anonymous or not current_user.admin:
         flash(_('Insufficient Prvilege'))
         return redirect(url_for('blog.index'))
     article = db.session.get(Article,id)
@@ -200,7 +200,7 @@ def edit(id):
 
 @bp.route('/delete/<id>', methods=['GET', 'POST'])
 def delete(id):
-    if current_user.is_anonymous or not current_user.isAdmin():
+    if current_user.is_anonymous or not current_user.admin:
         flash(_('Insufficient Prvilege'))
         return redirect(url_for(request.referrer))
     form = EmptyForm()
