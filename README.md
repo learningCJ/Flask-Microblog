@@ -16,4 +16,4 @@
       2. ELASTICSEARCH_PW="\<Your ElasticSearch Password provided\>"
       3. ELASTICSEARCH_CERT_DIR="/path/to/elasticsearch/certificate" (This certificate comes with the installation of ElasticSearch)
       4. ELASTICSEARCH_USERNAME = 'elastic' (note: By version 8.8, the username is "elastic", but might differ based on versions)
-
+5. Install all dependencies by `pip install -r requirements.txt` 
