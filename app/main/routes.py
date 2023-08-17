@@ -26,9 +26,9 @@ def about():
     techs = db.session.scalars(sa.select(TechStack))
     return render_template('about.html', title=_('About'), form=form, techs=list(techs))
 
-@bp.route('/resume', methods=['GET'])
-def resume():
-    return render_template('ChrisJeong.html', title=_('Resume'))
+#@bp.route('/resume', methods=['GET'])
+#def resume():
+#    return render_template('ChrisJeong.html', title=_('Resume'))
 
 @bp.route('/deleteTech/<techID>', methods=["POST"])
 @login_required

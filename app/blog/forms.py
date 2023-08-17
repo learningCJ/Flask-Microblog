@@ -11,7 +11,7 @@ from app.models import User
 class BlogPostForm(FlaskForm):
     title = StringField(_('Title'), validators=[DataRequired(), Length(min=1, max=90)])
     body = CKEditorField(validators=[DataRequired(), Length(min=1, max=37000)])
-    tags = StringField(_('Tags:'), validators=[DataRequired()])
+    tags = StringField(_('Tags (Separate by a comma and a space. E.g. Tag1, Tag2):'), validators=[DataRequired()])
     series = StringField(_('Series'),validators=[Length(max=100)])
     seriesOrder = IntegerField(_('Series Order'), validators=[Optional()])
     save = SubmitField(_l('Save to Drafts'))
